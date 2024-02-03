@@ -16,20 +16,19 @@ class Chunk(Entity):
             setattr(self, key, value)
 
     def generate_blocks(self):
-        for x in range(self.CHUNK_SIZE):
+        for x in range(int(self.CHUNK_SIZE)):
             surface_y = 3 * noise2(x=(x + self.position.x) * 0.1, y=0)
-            for y in range(self.CHUNK_SIZE):
+            for y in range(int(self.CHUNK_SIZE)):
                 block_cords = Vec2(x, -y)
                 if block_cords.y + self.position.y < surface_y:
-                    texture = "textures/block/temp_dirt_2.jpeg"
+                    texture = "textures/blocks/414.png"
                     if 0 <= surface_y - (block_cords.y + self.position.y) <= 1:
-                        texture = "textures/block/temp_dirt.jpg"
+                        texture = "textures/blocks/400.png"
                     block = Entity(
                         position=block_cords,
                         parent=self,
                         model="quad",
                         texture=texture,
                         collider="box",
-                        collision=True,
                     )
                     self.ground_blocks_entities.append(block)

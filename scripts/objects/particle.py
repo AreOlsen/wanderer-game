@@ -8,7 +8,6 @@ class Particle(MovingObject):
     def __init__(
         self,
         texture,
-        pos,
         vel=(0, 0),
         gravity=-0.9,
         scale=1,

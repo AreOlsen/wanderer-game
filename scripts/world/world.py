@@ -41,9 +41,9 @@ class World(Entity):
                 / (2 * self.CHUNK_SIZE)
             )
             * 2
-            + 1
+            + 2
         )
-        count_y = math.ceil(camera.aspect_ratio_getter() / count_x) + 1
+        count_y = math.ceil(camera.aspect_ratio_getter() / count_x) + 3
         # We get the individual chunks from the counts and the cam position.
         cam_pos_indices = self.pos_to_chunk_indices(camera.position)
         new_loaded_chunk_indices = []
