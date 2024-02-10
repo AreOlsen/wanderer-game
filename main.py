@@ -4,11 +4,16 @@ from scripts.world.world import World
 from scripts.characters.player import Player
 from scripts.world.background import Background
 
-app = Ursina(title="Wanderer.", icon='wanderer_w_icon.ico', vsync=False, development_mode=False, borderless=False)
+app = Ursina(
+    title="Wanderer.",
+    icon="wanderer_w_icon.ico",
+    vsync=False,
+    development_mode=False,
+    borderless=False,
+)
 
-# world = World()
-player = Player(gravity=-1, position=(0, 0))
-bg = Background(10,0.9)
+player = Player(gravity=-6, position=(0, 40))
+bg = Background(10, 20, 4)
 w = World()
 
 app.run()

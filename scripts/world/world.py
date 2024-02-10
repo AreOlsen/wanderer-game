@@ -30,7 +30,7 @@ class World(Entity):
     def load_chunks(self):
         # Enable all chunks which are in render view.
         # We calculate the number of chunks to load in x and y.
-        count_x = (
+        count_x = max(
             int(
                 math.ceil(
                     2
@@ -40,10 +40,10 @@ class World(Entity):
                 )
                 / (2 * self.CHUNK_SIZE)
             )
-            * 2
-            + 2
+            * 2,
+            2,
         )
-        count_y = math.ceil(camera.aspect_ratio_getter() / count_x) + 3
+        count_y = max(math.ceil(camera.aspect_ratio_getter() / count_x), 2)
         # We get the individual chunks from the counts and the cam position.
         cam_pos_indices = self.pos_to_chunk_indices(camera.position)
         new_loaded_chunk_indices = []
@@ -68,7 +68,7 @@ class World(Entity):
         # Set the current loaded chunk indices for next iteration.
         self.loaded_chunks_indices = new_loaded_chunk_indices
 
-        # This greatly increases the frame rate.
+        # By enabling and disabling chunks on the flying the frame rate greatly increases.
 
     def update(self):
         self.load_chunks()
