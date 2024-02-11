@@ -1,5 +1,6 @@
 from ursina import Sprite, Entity, camera, color
 from ursina.ursinamath import Vec3
+from natsort import natsorted
 import math
 import glob
 from PIL import Image
@@ -11,7 +12,8 @@ class Background(Entity):
         self.movement_factor = movement_factor
         # Get all background images' path and put into a list.
         self.images = glob.glob("textures/background/*.png")
-        self.images = reversed(self.images)
+        #Sort the list such that we images are displayed in correct order.
+        self.images = natsorted(self.images)
         self.y_position = y_position
         # Get the desired 3d z distance from the background object and the camera.
         z_sum = abs(z_position - camera.position.z)
