@@ -7,7 +7,6 @@ from scripts.hud.corners import Corners
 from scripts.hud.mini_map import Minimap
 from scripts.hud.inventory import Inventory
 
-
 app = Ursina(
     title="Wanderer.",
     icon="wanderer_w_icon.ico",
@@ -19,8 +18,8 @@ app = Ursina(
 player = Player(gravity=-6, position=(0, 40))
 bg = Background(10, 20, 4)
 w = World()
-#corners = Corners()
+corners = Corners()
 inv = Inventory()
-mini = Minimap()
+# mini = Minimap()
 audio = Audio(sound_file_name="sounds/music/titlescreen.mp3", loop=True, autoplay=True)
 app.run()
