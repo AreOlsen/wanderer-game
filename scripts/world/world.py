@@ -69,6 +69,7 @@ class World(Entity):
         self.loaded_chunks_indices = new_loaded_chunk_indices
 
         # By enabling and disabling chunks on the flying the frame rate greatly increases.
+        # Save chunks then load them if not already in the list.
 
     def update(self):
         self.load_chunks()
