@@ -4,7 +4,7 @@ from opensimplex import noise2
 
 
 class Chunk(Entity):
-    def __init__(self, top_left_position: Vec2, chunk_size=8, **kwargs):
+    def __init__(self, top_left_position: Vec2, chunk_size=12, **kwargs):
         self.entities = []
         self.CHUNK_SIZE = chunk_size
         self.ground_blocks_entities = []

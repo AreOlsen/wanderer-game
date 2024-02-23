@@ -15,7 +15,7 @@ app = Ursina(
     borderless=False,
 )
 
-player = Player(gravity=-6, position=(0, 40))
+player = Player(gravity=-6, position=(0, 50))
 bg = Background(10, 20, 4)
 w = World()
 corners = Corners()

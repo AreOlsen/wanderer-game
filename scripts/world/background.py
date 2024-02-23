@@ -12,7 +12,7 @@ class Background(Entity):
         self.movement_factor = movement_factor
         # Get all background images' path and put into a list.
         self.images = glob.glob("textures/background/*.png")
-        #Sort the list such that we images are displayed in correct order.
+        # Sort the list such that we images are displayed in correct order.
         self.images = natsorted(self.images)
         self.y_position = y_position
         # Get the desired 3d z distance from the background object and the camera.

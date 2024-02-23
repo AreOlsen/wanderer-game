@@ -7,7 +7,7 @@ import math
 
 
 class World(Entity):
-    def __init__(self, chunk_size=8):
+    def __init__(self, chunk_size=12):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
         self.loaded_chunks_indices = []
@@ -36,9 +36,8 @@ class World(Entity):
                     2
                     * abs(camera.position.z)
                     * abs(math.tan(math.radians(camera.fov_getter() / 2)))
-                    - self.CHUNK_SIZE
+                    - self.CHUNK_SIZE / (2 * self.CHUNK_SIZE)
                 )
-                / (2 * self.CHUNK_SIZE)
             )
             * 2,
             2,
