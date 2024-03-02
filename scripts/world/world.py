@@ -1,28 +1,36 @@
 import pickle
 from ursina.ursinamath import Vec2
-from ursina import Entity, camera
+from ursina import Entity, camera, destroy
 from scripts.world.chunk import Chunk
 import opensimplex
 import math
+import asyncio
+import os
 
 
 class World(Entity):
-    def __init__(self, chunk_size=12):
+    def __init__(self, save_name, chunk_size=12):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
-        self.loaded_chunks_indices = []
-        opensimplex.random_seed()
+        self.all_chunks_indices = []
+        self.save_name = save_name
+        # Make the save.
+        if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
+            opensimplex.random_seed()
+        # Else just load it.
+        else:
+            self = self.load_world()
         super().__init__()
 
-    def save_world(self, name):
-        with open(f"{name}.pickle", "wb") as handle:
+    async def save_world(self):
+        with open(f"data/world_saves/{self.save_name}/.pickle", "wb") as handle:
             pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def load_world(self, name):
-        with open(f"{name}.pickle", "rb") as handle:
+    def load_world(self):
+        with open(f"data/world_saves/{self.save_name}.pickle", "rb") as handle:
             self = pickle.load(handle)
 
-    def pos_to_chunk_indices(self, pos: Vec2) -> Vec2:
+    def pos_to_chunk_indicies(self, pos: Vec2) -> Vec2:
         return Vec2(
             math.floor(pos.x / self.CHUNK_SIZE), math.floor(pos.y / self.CHUNK_SIZE)
         )
@@ -30,45 +38,45 @@ class World(Entity):
     def load_chunks(self):
         # Enable all chunks which are in render view.
         # We calculate the number of chunks to load in x and y.
-        count_x = max(
-            int(
-                math.ceil(
-                    2
-                    * abs(camera.position.z)
-                    * abs(math.tan(math.radians(camera.fov_getter() / 2)))
-                    - self.CHUNK_SIZE / (2 * self.CHUNK_SIZE)
-                )
+        count_x = int(
+            math.ceil(
+                2
+                * abs(camera.position.z)
+                * abs(math.tan(math.radians(camera.fov / 2)))
+                / self.CHUNK_SIZE
             )
-            * 2,
-            2,
         )
-        count_y = max(math.ceil(camera.aspect_ratio_getter() / count_x), 2)
+        count_y = int(math.ceil(camera.aspect_ratio_getter() / count_x) + 1)
         # We get the individual chunks from the counts and the cam position.
-        cam_pos_indices = self.pos_to_chunk_indices(camera.position)
-        new_loaded_chunk_indices = []
-        for x in range(-count_x // 2, count_x // 2 + 1):
-            for y in range(-count_y // 2, count_y // 2 + 1):
-                chunk_indices = Vec2(cam_pos_indices.x + x, cam_pos_indices.y + y)
-                new_loaded_chunk_indices.append(chunk_indices)
-                if chunk_indices in self.all_chunks.keys():
-                    self.all_chunks[chunk_indices].enabled = True
+        cam_pos_indices = self.pos_to_chunk_indicies(camera.position)
+        new_loaded_chunk_indicies = []
+        # Go through all the currently loaded chunks.
+        for x in range(-int(math.floor(count_x / 2)), int(math.ceil(count_x / 2)) + 1):
+            for y in range(
+                -int(math.floor(count_y / 2)), int(math.ceil(count_y / 2)) + 1
+            ):
+                # Get the current chunk indices.
+                chunk_indicies = Vec2(cam_pos_indices.x + x, cam_pos_indices.y + y)
+                # Currently loaded chunks.
+                new_loaded_chunk_indicies.append(chunk_indicies)
+                # If the chunk exists but we ensure it is enabled.
+                if chunk_indicies in self.all_chunks.keys():
+                    self.all_chunks[chunk_indicies].enabled = True
+                # If the chunk hasn't been made.
                 else:
-                    self.all_chunks[chunk_indices] = Chunk(
-                        self.CHUNK_SIZE * chunk_indices, self.CHUNK_SIZE
+                    self.all_chunks[chunk_indicies] = Chunk(
+                        self.CHUNK_SIZE * chunk_indicies, self.CHUNK_SIZE
                     )
 
-        # Reset which chunks are loaded in rn.
-        # Get difference in cur loaded chunks and the new ones, we disable the unloaded ones.
-        for index in list(
-            set(self.loaded_chunks_indices) - set(new_loaded_chunk_indices)
+        # Some of the old chunks may get unloaded, so we disable those.
+        # This is the difference between the previous frame's loaded chunks, and the current new loaded chunks.
+        for chunk_indicies in list(
+            set(self.all_chunks_indices) - set(new_loaded_chunk_indicies)
         ):
-            self.all_chunks[index].enabled = False
+            self.all_chunks[chunk_indicies].enabled = False
 
         # Set the current loaded chunk indices for next iteration.
-        self.loaded_chunks_indices = new_loaded_chunk_indices
-
-        # By enabling and disabling chunks on the flying the frame rate greatly increases.
-        # Save chunks then load them if not already in the list.
+        self.all_chunks_indices = new_loaded_chunk_indicies
 
     def update(self):
         self.load_chunks()

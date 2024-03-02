@@ -11,13 +11,13 @@ app = Ursina(
     title="Wanderer.",
     icon="wanderer_w_icon.ico",
     vsync=False,
-    development_mode=False,
+    development_mode=True,
     borderless=False,
 )
 
 player = Player(gravity=-6, position=(0, 50))
 bg = Background(10, 20, 4)
-w = World()
+w = World("test1")
 corners = Corners()
 inv = Inventory()
 # mini = Minimap()

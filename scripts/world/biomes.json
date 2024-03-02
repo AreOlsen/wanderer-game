@@ -1,0 +1,14 @@
+{
+	"winter_plains": {
+		"block_textures": {
+			"surface_block": "textures/blocks/405.png",
+			"under_surface_block": "textures/blocks/415.png"
+		}
+	},
+	"plains": {
+		"block_textures": {
+			"surface_block": "textures/blocks/405.png",
+			"under_surface_block": "textures/blocks/415.png"
+		}
+	}
+}
