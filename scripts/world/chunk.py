@@ -1,9 +1,9 @@
-from ursina import Sprite, Entity
+from ursina import Sprite, Entity, Texture
 from ursina.ursinamath import Vec2, Vec3
 from opensimplex import noise2
 import json
 from numpy import array
-
+from PIL import Image
 
 """
 Each chunk consists of two parts.
@@ -32,31 +32,11 @@ class Chunk(Entity):
             )
         ]
         self.generate_blocks()
-        self.combine_blocks()
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-    """
-    This function combines all individual blocks into one big chunk.
-    """
-
-    def combine_blocks(self):
-        """
-        Create the texture for the whole chunk,
-        when combining, the individual textures get lost as multiple textures cannot be used on one entity.
-        So we manually combine all of them into one texture and put that one texture on the chunk.
-        """
-
-        """
-        Combine all the blocks into one entity, and use their overall mesh as the collider.
-        """
         self.combine()
         self.collider = "mesh"
 
-    """
-    This function generates the indiviual blocks' data and then it stores their data.
-    """
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def generate_blocks(self):
         for x in range(int(self.CHUNK_SIZE)):

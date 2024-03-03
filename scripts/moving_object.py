@@ -1,8 +1,8 @@
 from ursina.ursinamath import Vec2, Vec3
-from ursina import Entity, time, raycast, distance_2d, BoxCollider, destroy
+from ursina import Entity, time, raycast, distance_2d, BoxCollider, destroy, scene
 import math
 import numpy as np
-
+import copy
 
 class MovingObject(Entity):
     def __init__(
@@ -60,20 +60,18 @@ class MovingObject(Entity):
     def check_next_collision(self):
         next_hit_ent = Entity(
             position=self.position + self.velocity * time.dt,
-            collider=self.collider,
         )
-        return next_hit_ent.intersects(ignore=(self, next_hit_ent))
+        next_hit_ent.collider = BoxCollider(next_hit_ent,center=self.collider.center,size=self.collider.size)
+        hit = copy.copy(next_hit_ent.intersects(ignore=(self, next_hit_ent)))
+        destroy(next_hit_ent)
+        return hit
 
-    def collisions(self):
-        # We need to check the next y position and check if intersection.
-        # Then repeat after y position for the x position, we can't do both at the same time.
-        # This is to due to the fact that we can fall left down into the ground and then just be stuck when walking.
-        # Y.
+    
+    def collision_y(self):
         y_next = self.check_next_collision()
         if y_next.hit:
             if self.parent_on_hit:
                 self.parent = y_next.entity
-
             diff = y_next.world_point - self.position
             normal_vector = -1 * Vec2(np.sign(diff.x), np.sign(diff.y))
             # Stop velocity y direction.
@@ -88,11 +86,6 @@ class MovingObject(Entity):
                 ),
                 0,
             )
-            # Because sometimes the hit is diagonal we only should move it up/down if the y axis is less than the collider in y the axis.
-            # This is the only time we want a full-stop in the y-axis, we want stop in speed however in both.
-            # It is a complex system of "stopping" mechanisms.
-            # When we stop we also want to place it on the ground or the corresponding surface, so that we dont stop mid air in speed.
-            # FIX: We aren't taking center of collider into account any time.
             if (
                 diff.y < -normal_vector.y * (self.collider.size[1]) / 2
                 and bounce_up == False
@@ -103,14 +96,14 @@ class MovingObject(Entity):
                     + y_next.world_point.y
                     + (self.collider.size[1]) / 2,
                 )
-        # X.
+
+    def collision_x(self):
         x_next = self.check_next_collision()
-        # X kollisjonar passar ikkje heilt med collideren.
         if x_next.hit:
             if self.parent_on_hit:
-                self.parent = y_next.entity
+                self.parent = x_next.entity
             # Stop velocity x direction.
-            diff = y_next.world_point - self.position
+            diff = x_next.world_point - self.position
             normal_vector = -1 * Vec2(np.sign(diff.x), np.sign(diff.y))
             bounce_left = self.bounce_left and normal_vector.x == -1
             bounce_right = self.bounce_right and normal_vector.x == 1
@@ -123,3 +116,13 @@ class MovingObject(Entity):
                 self.velocity.y,
                 0,
             )
+
+    def collisions(self):
+        # We need to check the next y position and check if intersection.
+        # Then repeat after y position for the x position, we can't do both at the same time.
+        # This is to due to the fact that we can fall left down into the ground and then just be stuck when walking.
+        # Parent_on_hit makes it such that the object will be stuck in the thing. I.e the arrow gets stuck in the ground.
+        # Y.
+        self.collision_y()
+        # X.
+        self.collision_x()

@@ -6,24 +6,25 @@ import opensimplex
 import math
 import asyncio
 import os
-
+import copy
 
 class World(Entity):
     def __init__(self, save_name, chunk_size=12):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
         self.all_chunks_indices = []
+        super().__init__()
         self.save_name = save_name
         # Make the save.
-        if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
-            opensimplex.random_seed()
-        # Else just load it.
-        else:
-            self = self.load_world()
-        super().__init__()
+        #if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
+        #    self.save_world()
+        #    opensimplex.random_seed()
+        ## Else just load it.
+        #else:
+        #    self = self.load_world()
 
-    async def save_world(self):
-        with open(f"data/world_saves/{self.save_name}/.pickle", "wb") as handle:
+    def save_world(self):
+        with open(f"data/world_saves/{self.save_name}.pickle", "wb") as handle:
             pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load_world(self):
@@ -46,7 +47,7 @@ class World(Entity):
                 / self.CHUNK_SIZE
             )
         )
-        count_y = int(math.ceil(camera.aspect_ratio_getter() / count_x) + 1)
+        count_y = int(math.ceil(camera.aspect_ratio_getter() / count_x)+1)
         # We get the individual chunks from the counts and the cam position.
         cam_pos_indices = self.pos_to_chunk_indicies(camera.position)
         new_loaded_chunk_indicies = []
