@@ -9,6 +9,7 @@ from ursina import (
 )
 from ursina.ursinamath import Vec2, Vec3
 from scripts.moving_object import MovingObject
+from scripts.hud.inventory import Inventory, InventoryItem
 
 
 class Player(MovingObject):
@@ -17,6 +18,7 @@ class Player(MovingObject):
         self.scale = 1
         self.collider = BoxCollider(self, center=(0, 0, 0), size=(0.5, 0.7, 0))
         self.double_sided = True
+        self.inventory = Inventory()
         self.animator = Animator(
             animations={
                 "idle": Animation(

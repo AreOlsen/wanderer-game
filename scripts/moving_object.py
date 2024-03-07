@@ -4,6 +4,7 @@ import math
 import numpy as np
 import copy
 
+
 class MovingObject(Entity):
     def __init__(
         self,
@@ -61,12 +62,13 @@ class MovingObject(Entity):
         next_hit_ent = Entity(
             position=self.position + self.velocity * time.dt,
         )
-        next_hit_ent.collider = BoxCollider(next_hit_ent,center=self.collider.center,size=self.collider.size)
+        next_hit_ent.collider = BoxCollider(
+            next_hit_ent, center=self.collider.center, size=self.collider.size
+        )
         hit = copy.copy(next_hit_ent.intersects(ignore=(self, next_hit_ent)))
         destroy(next_hit_ent)
         return hit
 
-    
     def collision_y(self):
         y_next = self.check_next_collision()
         if y_next.hit:

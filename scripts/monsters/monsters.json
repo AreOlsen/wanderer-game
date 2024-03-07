@@ -1,20 +1,20 @@
 {
-  "demon_dragon": {
-    "spawn_chance": 0.05,
-    "scale": {
-      "x": 2,
-      "y": 3
-    },
-    "can_shoot": false,
-    "health": 600,
-    "can_melee": true,
-    "can_run": false,
-    "stationary_when_attacking": true,
-    "animations": {
-      "melee": "textures/monsters/demon_dragon/melee.gif",
-      "idle": "textures/monsters/demon_dragon/idle.gif",
-      "walking": "textures/monsters/demon_dragon/idle.gif"
-    },
-    "walking_speed": 0.2
-  }
+	"demon_dragon": {
+		"spawn_chance": 1,
+		"scale": {
+			"x": 3,
+			"y": 3
+		},
+		"can_shoot": false,
+		"health": 600,
+		"can_melee": true,
+		"can_run": false,
+		"stationary_when_attacking": true,
+		"animations": {
+			"melee": "textures/monsters/demon_dragon/melee.gif",
+			"idle": "textures/monsters/demon_dragon/idle.gif",
+			"walking": "textures/monsters/demon_dragon/idle.gif"
+		},
+		"walking_speed": 0.2
+	}
 }

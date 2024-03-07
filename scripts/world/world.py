@@ -8,6 +8,7 @@ import asyncio
 import os
 import copy
 
+
 class World(Entity):
     def __init__(self, save_name, chunk_size=12):
         self.all_chunks = {}
@@ -16,11 +17,11 @@ class World(Entity):
         super().__init__()
         self.save_name = save_name
         # Make the save.
-        #if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
+        # if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
         #    self.save_world()
         #    opensimplex.random_seed()
         ## Else just load it.
-        #else:
+        # else:
         #    self = self.load_world()
 
     def save_world(self):
@@ -47,7 +48,7 @@ class World(Entity):
                 / self.CHUNK_SIZE
             )
         )
-        count_y = int(math.ceil(camera.aspect_ratio_getter() / count_x)+1)
+        count_y = int(math.ceil(camera.aspect_ratio_getter() / count_x) + 1)
         # We get the individual chunks from the counts and the cam position.
         cam_pos_indices = self.pos_to_chunk_indicies(camera.position)
         new_loaded_chunk_indicies = []
@@ -72,7 +73,9 @@ class World(Entity):
         # Some of the old chunks may get unloaded, so we disable those.
         # This is the difference between the previous frame's loaded chunks, and the current new loaded chunks.
         for chunk_indicies in list(
-            set(self.all_chunks_indices) - set(new_loaded_chunk_indicies)
+            set(self.all_chunks_indices).symmetric_difference(
+                set(new_loaded_chunk_indicies)
+            )
         ):
             self.all_chunks[chunk_indicies].enabled = False
 

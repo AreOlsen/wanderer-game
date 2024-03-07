@@ -1,17 +1,41 @@
-from ursina import held_keys, camera, Entity, Animation, window, Sequence
+from ursina import (
+    held_keys,
+    camera,
+    Entity,
+    Animation,
+    window,
+    Sequence,
+    Draggable,
+    Tooltip,
+)
 from ursina.ursinamath import Vec2, Vec3
 
 
+class InventoryItem(Draggable):
+    def __init__(self, texture, name, description, scale):
+        super().__init__()
+        self.texture = texture
+        self.name = name
+        self.description = description
+        self.info = Tooltip(f"{self.name}\n{self.description}")
+        self.info.enabled = False
+
+    def update(self):
+        if self.dragging == False and self.hovered:
+            self.info.enabled = True
+
+
 class Inventory(Entity):
+    """
+    The inventory works quite like in minecraft,
+    you've got one grid of squares, in each square you can have one item
+    stacking upwards towards 16 before a new square is filled.
+    You've also got a smaller inv for quick-switching items.
+    When I is pressed the big inventory is shown, else the smaller one is shown.
+    """
+
     def __init__(self):
         super().__init__()
-        """
-        The inventory works quite like in minecraft,
-        you've got one grid of squares, in each square you can have one item
-        stacking upwards towards 16 before a new square is filled.
-        You've also got a smaller inv for quick-switching items.
-        When I is pressed the big inventory is shown, else the smaller one is shown.
-        """
 
         # INIT BIG INVENTORY.
         self.MAX_STACK_SIZE = 16
@@ -67,6 +91,8 @@ class Inventory(Entity):
             )
             for i in range(self.MINI_GRID_X)
         ]
+
+        self.INVENTORY_ITEMS = []
 
     def update(self):
         self.big_inventory_visible = False
