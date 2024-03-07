@@ -1,20 +1,20 @@
 {
-	"winter_plains": {
-		"block_textures": {
-			"surface_block": "textures/blocks/405.png",
-			"under_surface_block": "textures/blocks/415.png"
-		}
-	},
-	"plains": {
-		"block_textures": {
-			"surface_block": "textures/blocks/400.png",
-			"under_surface_block": "textures/blocks/414.png"
-		}
-	},
-	"savanna": {
-		"block_textures": {
-			"surface_block": "textures/blocks/404.png",
-			"under_surface_block": "textures/blocks/415.png"
-		}
-	}
+  "winter_plains": {
+    "block_textures": {
+      "surface_block": "textures/blocks/405.png",
+      "under_surface_block": "textures/blocks/415.png"
+    }
+  },
+  "plains": {
+    "block_textures": {
+      "surface_block": "textures/blocks/400.png",
+      "under_surface_block": "textures/blocks/414.png"
+    }
+  },
+  "savanna": {
+    "block_textures": {
+      "surface_block": "textures/blocks/404.png",
+      "under_surface_block": "textures/blocks/415.png"
+    }
+  }
 }

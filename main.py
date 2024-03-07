@@ -17,12 +17,11 @@ app = Ursina(
     borderless=False,
 )
 
-player = Player(gravity=-6, position=(0, 10))
+player = Player(gravity=-6, position=(0, 30))
 bg = Background(10, 20, 4)
 w = World("test1")
 corners = Corners()
-monst = Monster(position=Vec2(0, 5))
-# inv = Inventory()
+inv = Inventory()
 # mini = Minimap()
 # invI = InventoryItem("textures/items/sword.png","Sword", "Majestic, isn't it?", 0.1)
 # audio = Audio(sound_file_name="sounds/music/titlescreen.mp3", loop=True, autoplay=True)
