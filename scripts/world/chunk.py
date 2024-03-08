@@ -32,11 +32,22 @@ class Chunk(Entity):
             )
         ]
         self.generate_blocks()
-        self.combine()
+        self.combine(ignore=self.entities+self.background_blocks)
         self.collider = "mesh"
-
+        self.texture = self.generate_ground_chunk_texture()
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def generate_ground_chunk_texture(self):
+        """
+        When combining all the different blocks into one entity, we lose the data for the respective textures.
+        So in this function we just generate it and apply it ourselves! Quick and easy!
+        """
+        texture = Texture("")
+        for block in self.ground_blocks_entities:
+            
+        return texture
+        
 
     def generate_blocks(self):
         for x in range(int(self.CHUNK_SIZE)):

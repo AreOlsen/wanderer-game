@@ -6,6 +6,8 @@ from ursina import (
     window,
     Sequence,
     Draggable,
+    Func,
+    Wait,
     Tooltip,
 )
 from ursina.ursinamath import Vec2, Vec3
@@ -39,14 +41,25 @@ class BigInventory(Entity):
         self.model = "quad"
         self.texture = "textures/hud/inventory/static.png"
         self.inventory_items = []
+        self.scale = 0.8
 
     def enable(self):
-        #Show opening animation
+        opening_animation = Sequence(
+            Wait(0.5),
+            Func(print, "aaa"),
+        )
+        opening_animation.start()
         self.enabled = True
 
     def disable(self):
-        #Show closing animation.
+        # Show closing animation.
+        closing_animation = Sequence(
+            Wait(0.5),
+            Func(print, "aba"),
+        )
+        closing_animation.start()
         self.enabled = False
+
 
 class SmallInventory(Entity):
     def __init__(self):
@@ -57,20 +70,18 @@ class SmallInventory(Entity):
         self.MINI_GRID_X = 10
         self.selected_item_index = 0
         self.parent = camera.ui
-        self.position =Vec2(
-                window.bottom.x + self.mini_offset_x,
-                window.bottom.y + self.mini_offset_y,
-            )
-        self.model="quad"
+        self.position = Vec2(
+            window.bottom.x + self.mini_offset_x,
+            window.bottom.y + self.mini_offset_y,
+        )
+        self.model = "quad"
         self.texture = "textures/hud/inventory/mini_inv.png"
         self.scale_x = 0.8
         self.scale_y = 0.15
 
-        #INIT ALL MINI SLOTS.
+        # INIT ALL MINI SLOTS.
         item_holder_distance = self.scale_x / 12
-        item_holder_scale = (
-            self.scale_x - item_holder_distance * 2
-        ) / self.MINI_GRID_X
+        item_holder_scale = (self.scale_x - item_holder_distance * 2) / self.MINI_GRID_X
 
         self.quick_inv_items = [
             Entity(
@@ -111,17 +122,16 @@ class SmallInventory(Entity):
 
             # IT IS NOT GARAUNTEED THAT NUMBER IS INSIDE THE SLOT ARRAY.
             if selected_quick <= self.MINI_GRID_X:
-                #CHANGE CURRENT SLOT FOCUSED TO STANDARD.
+                # CHANGE CURRENT SLOT FOCUSED TO STANDARD.
                 self.quick_inv_items[self.selected_item_index].texture = (
                     "textures/hud/inventory/item_holder.png"
                 )
-                #UPDATE FOCUSED SLOT.
+                # UPDATE FOCUSED SLOT.
                 self.selected_item_index = selected_quick - 1
                 self.quick_inv_items[self.selected_item_index].texture = (
                     "textures/hud/inventory/item_holder_selected.png"
                 )
 
-    
     def enable(self):
         for i in self.quick_inv_items:
             i.enabled = True
@@ -131,6 +141,7 @@ class SmallInventory(Entity):
         for i in self.quick_inv_items:
             i.enabled = False
         self.enabled = False
+
 
 class Inventory(Entity):
     """
@@ -143,9 +154,9 @@ class Inventory(Entity):
 
     def __init__(self):
         super().__init__()
-        #For toggling:
-        #Each frame is updated and gives a return, we have to check if it is the first frame when clicked.
-        self._opening_last_frame = False
+        # For toggling:
+        # Each frame is updated and gives a return, we have to check if it is the first frame when clicked.
+        self._toggling_menu_last_frame = False
         self.big_inventory_visible = False
         self.big_menu = BigInventory()
         self.small_menu = SmallInventory()
@@ -153,26 +164,27 @@ class Inventory(Entity):
     def check_if_toggle(self):
         """Check and eventually toggle the currently toggled menu."""
         if held_keys["i"]:
-            #Check for if first key-press.
-            #Each frame registers individual press of button while holding, so we create a toggle here by utilising the last frame's pressing state.
-            if self._opening_last_frame == False:
+            # Check for if first key-press.
+            # Each frame registers individual press of button while holding, so we create a toggle here by utilising the last frame's pressing state.
+            if self._toggling_menu_last_frame == False:
                 self.big_inventory_visible = not self.big_inventory_visible
 
-        #Set next frame's last frame state. Aka current state.
-        self._opening_last_frame=False
+        # Set next frame's last frame state. Aka current state.
+        self._toggling_menu_last_frame = False
         if held_keys["i"]:
-            self._opening_last_frame = True
+            self._toggling_menu_last_frame = True
 
     def toggle_inventories(self):
         # Only show one inventory.
-        #SHOW ONLY BIG INVENTORY.
-        if self.big_inventory_visible:
-            self.small_menu.disable()
-            self.big_menu.enable()
-        #SHOW ONLY SMALL INVENTORY.
-        else:
-            self.small_menu.enable()
-            self.big_menu.disable()
+        # SHOW ONLY BIG INVENTORY.
+        if self._toggling_menu_last_frame:
+            if self.big_inventory_visible:
+                self.small_menu.disable()
+                self.big_menu.enable()
+            # SHOW ONLY SMALL INVENTORY.
+            else:
+                self.small_menu.enable()
+                self.big_menu.disable()
 
     def update(self):
         self.check_if_toggle()

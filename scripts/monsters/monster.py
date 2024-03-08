@@ -26,13 +26,17 @@ class Monster(Entity):
         self.can_melee = Monster._monsters[self.monster_type]["can_melee"]
         self.can_run = Monster._monsters[self.monster_type]["can_run"]
         self.health = Monster._monsters[self.monster_type]["health"]
-        collider_center = (Monster._monsters[self.monster_type]["box_collider"]["center"]["x"],
-                           Monster._monsters[self.monster_type]["box_collider"]["center"]["y"],
-                           0)
-        collider_size = (Monster._monsters[self.monster_type]["box_collider"]["size"]["x"],
-                         Monster._monsters[self.monster_type]["box_collider"]["size"]["y"],
-                         0)
-        self.collider = BoxCollider(self,center=collider_center,size=collider_size)
+        collider_center = (
+            Monster._monsters[self.monster_type]["box_collider"]["center"]["x"],
+            Monster._monsters[self.monster_type]["box_collider"]["center"]["y"],
+            0,
+        )
+        collider_size = (
+            Monster._monsters[self.monster_type]["box_collider"]["size"]["x"],
+            Monster._monsters[self.monster_type]["box_collider"]["size"]["y"],
+            0,
+        )
+        self.collider = BoxCollider(self, center=collider_center, size=collider_size)
         self.stationary_when_attacking = Monster._monsters[self.monster_type][
             "stationary_when_attacking"
         ]
@@ -60,7 +64,7 @@ class Monster(Entity):
                 ),
             }
         )
-        #CAN MELEE.
+        # CAN MELEE.
         if self.can_melee:
             self.animator.animations["melee"] = Animation(
                 Monster._monsters[self.monster_type]["animations"]["melee"],
@@ -72,7 +76,7 @@ class Monster(Entity):
                 scale_y=self.scale_y,
                 enabled=False,
             )
-        #CAN RUN.
+        # CAN RUN.
         if self.can_run:
             self.animator.animations["running"] = Animation(
                 Monster._monsters[self.monster_type]["animations"]["running"],
@@ -84,7 +88,7 @@ class Monster(Entity):
                 scale_y=self.scale_y,
                 enabled=False,
             )
-        #CAN SHOOT.
+        # CAN SHOOT.
         if self.can_shoot:
             self.animator.animations["shooting"] = Animation(
                 Monster._monsters[self.monster_type]["animations"]["shooting"],
@@ -105,12 +109,9 @@ class Monster(Entity):
             self.projectile_rotating = Monster._monsters[self.monster_type][
                 "projectile"
             ]["rotating"]
-            self.shooting_range = Monster._monsters[self.monster_type][
-                "projectile"
-            ]["shooting_range"]
+            self.shooting_range = Monster._monsters[self.monster_type]["projectile"][
+                "shooting_range"
+            ]
 
-        #SET DEFAULT ANIMATION STATE.
+        # SET DEFAULT ANIMATION STATE.
         self.animator.state = "idle"
-
-    def update(self):
-        print(self.intersects().hit)
