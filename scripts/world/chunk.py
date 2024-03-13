@@ -12,7 +12,6 @@ The other part is the block data, this is what the chunk consists of.
 The individual blocks do not get drawn individually, but help build one big chunk which then gets drawn.
 """
 
-
 class Chunk(Entity):
     _biomes = json.load(open("scripts/world/biomes.json", "r"))
 
