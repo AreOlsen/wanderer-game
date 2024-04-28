@@ -1,20 +1,66 @@
 {
   "winter_plains": {
-    "block_textures": {
-      "surface_block": "textures/blocks/405.png",
-      "under_surface_block": "textures/blocks/415.png"
-    }
-  },
-  "plains": {
-    "block_textures": {
-      "surface_block": "textures/blocks/400.png",
-      "under_surface_block": "textures/blocks/414.png"
-    }
-  },
-  "savanna": {
-    "block_textures": {
-      "surface_block": "textures/blocks/404.png",
-      "under_surface_block": "textures/blocks/415.png"
+    "block_types":{
+      "surface_block":{
+        "texture":"textures/blocks/405.png",
+        "dropped_resource":
+        {
+          "name":"snow",
+          "texture":"textures/items/snowball.png",
+          "size_y":0.1,
+          "size_x":0.1
+        }
+      },
+      "under_surface_block":{
+        "texture":"textures/blocks/415.png",
+        "dropped_resource":
+        {
+          "name":"stone",
+          "texture":"textures/items/stone.png",
+          "size_y":0.1,
+          "size_x":0.1
+        }
+      },
+      "ores":{
+        "iron":{
+          "texture":"textures/blocks/36.png",
+          "dropped_resource":
+          {
+            "name":"iron",
+            "texture":"textures/items/iron_nugget.png",
+            "size_y":0.1,
+            "size_x":0.1
+          }
+        }
+      } 
+      },
+      "foliage":{
+        "big_tree":{
+          "texture":"textures/foliage/winter_large_spruce.png",
+          "size_y":0.5,
+          "size_x":0.25,
+          "spawn_rate":0.2,
+          "dropped_resource":
+          {
+            "name":"timber",
+            "texture":"textures/items/wood.png",
+            "size_y":0.1,
+            "size_x":0.1
+          }
+        },
+        "small_tree":{
+          "texture":"textures/foliage/winter_small_spruce.png",
+          "size_y":0.3,
+          "size_x":0.15,
+          "spawn_rate":0.1,
+          "dropped_resource":
+          {
+            "name":"timber",
+            "texture":"textures/items/wood.png",
+            "size_y":0.1,
+            "size_x":0.1
+          }
+        }
+      }
     }
   }
-}

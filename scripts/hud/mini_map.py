@@ -14,6 +14,3 @@ class Minimap(Entity):
         self.map_chunks_radius = 3
         self.position = Vec2(window.left.x + self.offset_x, window.top.y - self.offset_y)
     
-    """
-        IMPLEMENT MINIMAP.
-    """

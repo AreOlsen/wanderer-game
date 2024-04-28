@@ -1,6 +1,6 @@
 import pickle
 from ursina.ursinamath import Vec2
-from ursina import Entity, camera, destroy
+from ursina import Entity, camera, destroy, time
 from scripts.world.chunk import Chunk
 import opensimplex
 import math
@@ -10,19 +10,18 @@ import copy
 
 
 class World(Entity):
-    def __init__(self, save_name, chunk_size=12):
+    def __init__(self, save_name, chunk_size=12, save_frequency=3*60, seed=0, difficulty = "Easy"):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
         self.all_chunks_indices = []
         super().__init__()
         self.save_name = save_name
-        # Make the save.
-        # if not os.path.exists(f"data/world_saves/{save_name}.pickle"):
-        #    self.save_world()
-        #    opensimplex.random_seed()
-        ## Else just load it.
-        # else:
-        #    self = self.load_world()
+        self.save_frequency = save_frequency
+        self.time_to_next_save = min(10,save_frequency)
+        self.seed=seed
+        opensimplex.seed(self.seed)
+        self.difficulty = difficulty
+
 
     def save_world(self):
         with open(f"data/world_saves/{self.save_name}.pickle", "wb") as handle:
@@ -83,4 +82,9 @@ class World(Entity):
         self.all_chunks_indices = new_loaded_chunk_indicies
 
     def update(self):
+        self.time_to_next_save-=time.dt
         self.load_chunks()
+        #AUTOMATIC SAVE OF WORLD - EACH SAVE_FREQUENCY SECONDS.
+        if self.time_to_next_save<0:
+            self.time_to_next_save=self.save_frequency
+            self.save_world()

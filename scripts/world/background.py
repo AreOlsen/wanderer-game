@@ -5,7 +5,6 @@ import math
 import glob
 from PIL import Image
 
-
 class Background(Entity):
     def __init__(self, z_position, y_position, movement_factor):
         super().__init__()
@@ -22,17 +21,18 @@ class Background(Entity):
         self.s_x = 2 * abs(math.tan(math.radians(camera.fov_getter() / 2))) * z_sum
 
         # We want a constant background colour which is shown when the normal parallax images aren't in view, for empties skies and such.
-        self.constant_background = Sprite(
+        self.constant_sky_background = Sprite(
             color=color.rgb(118, 184, 226),
             world_position=Vec3(camera.position.x, camera.position.y, z_position),
             scale_x=self.s_x,
             scale_y=self.s_x / camera.aspect_ratio_getter(),
             parent=camera,
         )
+        self.z_position = z_position
 
         # Make the backgrounds into objects using the previous calculated properties.
-        # We spawn in two because if the camera is inbetween the need two to show the world continously.
-        # the size in y direction is the size in x, multiplied by the inverse aspect ratio of the image.
+        # We spawn in two because if the camera is inbetween the need two chunks to show the world continously.
+        # The size in y direction is the size in x, multiplied by the inverse aspect ratio of the image.
         self.image_sprites = [
             (
                 Entity(
@@ -63,10 +63,23 @@ class Background(Entity):
             for i, path in enumerate(self.images, start=1)
         ]
 
+        #Constant underground background for when we go under the ground.
+        #self.constant_underground_background = Sprite(
+        #    color=color.rgb(7,14,9),
+        #    world_position=Vec3(camera.world_position.x,min(self.image_sprites[-1][0].world_position.y-self.image_sprites[-1][0].scale_y,camera.world_position.y,self.z_position)),
+        #    scale_x=self.s_x,
+        #    scale_y=self.s_x/camera.aspect_ratio_getter(),
+        #    parent=camera,
+        #)
+        #print(self.constant_underground_background.world_position)
+
     def movement_speed(self, j):
         return 1 / (self.movement_factor ** (2) * j)
 
     def update(self):
+        #Update underground.
+        #self.constant_underground_background.world_position=Vec3(camera.world_position.x,min(self.image_sprites[-1][0].world_position.y-self.image_sprites[-1][0].scale_y,camera.world_position.y,self.z_position))
+        #print(self.constant_underground_background.world_position)
         # We move the images according to a movement factor and then using basic sawtooth math we repeat the images.
         for j, image_set in enumerate(reversed(self.image_sprites), start=1):
             offset_x = -(self.movement_speed(j) * camera.position.x / (self.s_x)) % 1

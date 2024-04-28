@@ -40,7 +40,7 @@ class MovingObject(Entity):
 
     def update(self):
         self.update_vel()
-        self.rotate()
+        self.rotate_texture()
         if self.collides:
             self.collisions()
         self.update_pos()

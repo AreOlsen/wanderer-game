@@ -5,10 +5,16 @@ from scripts.characters.player import Player
 from scripts.world.background import Background
 from scripts.hud.corners import Corners
 from scripts.hud.mini_map import Minimap
-
-# from scripts.hud.inventory import Inventory, InventoryItem
+from scripts.objects.item import HoldingItem
+from scripts.hud.gamestate import State, Statechanger
+from scripts.hud.inventory import Inventory, InventoryItem
 from scripts.monsters.monster import Monster
 from ursina.ursinamath import Vec2
+from scripts.hud.menus.settings_menu import SettingsMenu
+from scripts.hud.menus.game_menus import GameMenu
+from scripts.hud.menus.main_menu import MainMenu
+from scripts.hud.menus.load_games_menu import LoadGameMenu
+from scripts.hud.menus.new_game_menu import NewGameMenu
 
 app = Ursina(
     title="Wanderer.",
@@ -18,13 +24,26 @@ app = Ursina(
     borderless=False,
 )
 
-player = Player(gravity=-6, position=(0, 30))
-bg = Background(10, 20, 4)
-w = World("test1")
-corners = Corners()
-# inv = Inventory()
-monster = Monster(position=Vec2(0, 3))
-# mini = Minimap()
-# invI = InventoryItem("textures/items/sword.png","Sword", "Majestic, isn't it?", 0.1)
-# audio = Audio(sound_file_name="sounds/music/titlescreen.mp3", loop=True, autoplay=True)
+
+###
+# MENUS.
+###
+
+state_changer = Statechanger()
+START_MENU=MainMenu(state_changer)
+state_changer.add_state(START_MENU,"start_menu")
+GAME_MENU=GameMenu(state_changer)
+state_changer.add_state(GAME_MENU,"game_menu")
+SETTINGS_MENU=SettingsMenu(state_changer)
+state_changer.add_state(SETTINGS_MENU,"settings_menu")
+LOAD_MENU=LoadGameMenu(state_changer)
+state_changer.add_state(LOAD_MENU,"load_game_menu")
+NEW_GAME_MENU=NewGameMenu(state_changer)
+state_changer.add_state(NEW_GAME_MENU,"new_game_menu")
+state_changer.choose_state("start_menu")
+
+
+###
+# RUN GAME.
+###
 app.run()
