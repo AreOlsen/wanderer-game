@@ -10,7 +10,7 @@ import copy
 
 
 class World(Entity):
-    def __init__(self, save_name, chunk_size=12, save_frequency=3*60, seed=0, difficulty = "Easy"):
+    def __init__(self, save_name, player, background, chunk_size=12, save_frequency=3*60, seed=0, difficulty = "Easy"):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
         self.all_chunks_indices = []
@@ -19,6 +19,8 @@ class World(Entity):
         self.save_frequency = save_frequency
         self.time_to_next_save = min(10,save_frequency)
         self.seed=seed
+        self.player=player
+        self.background=background
         opensimplex.seed(self.seed)
         self.difficulty = difficulty
 

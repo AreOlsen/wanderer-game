@@ -103,22 +103,28 @@ class Chunk(Entity):
                         collider_enabled=True,
                         collider_scale=Vec3(1,1,0),
                         model="quad",
+                        origin=(0,0)
                     )
                     blocks_x.append(block)
             self.ground_entity.ground_blocks_entities.append(blocks_x)
 
 
     def generate_foliage(self):
+        #Info about foliage.
         foliage_chances = [Chunk._biomes[self.CHUNK_TYPE]["foliage"][foliage_name]["spawn_rate"] for foliage_name in Chunk._biomes[self.CHUNK_TYPE]["foliage"]]
         foliage_names = list(Chunk._biomes[self.CHUNK_TYPE]["foliage"].keys())
         for x in range(self.CHUNK_SIZE): 
+            #What foliage to spawn
             chosen_foliage_name = random.choices(foliage_names + [""], foliage_chances + [1 - sum(foliage_chances)], k=1)[0]
             if self.CHUNK_SIZE>len(self.ground_entity.ground_blocks_entities[x])>=1:
+                #If no foliage is chosen we ignore the column.
                 if chosen_foliage_name=="":
                     continue
+                #Get info about the chosen foliage.
                 plant_obj = Chunk._biomes[self.CHUNK_TYPE]["foliage"][chosen_foliage_name]
-                spawn_y = self.ground_entity.ground_blocks_entities[x][0].world_position.y+plant_obj["size_y"]+0.5+0.5*self.ground_entity.ground_blocks_entities[x][0].scale_y
+                spawn_y = self.ground_entity.ground_blocks_entities[x][0].world_position.y+0.5*plant_obj["size_y"]+1.5*self.ground_entity.ground_blocks_entities[x][0].scale_y
                 spawn_x = self.ground_entity.ground_blocks_entities[x][0].world_position.x
+                #Spawn the foliage.
                 plant = DeadDroppingEntity(
                     model="quad",
                     texture=plant_obj["texture"],
@@ -127,6 +133,7 @@ class Chunk(Entity):
                     item_obj_data=plant_obj["dropped_resource"],
                     scale_x=plant_obj["size_x"],
                     scale_y=plant_obj["size_y"],
-                    double_sided=True
+                    double_sided=True,
+                    origin=(0,-plant_obj["size_y"]/2)
                 )
                 self.entities.append(plant)

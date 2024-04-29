@@ -1,4 +1,4 @@
-from ursina import Sprite, Entity, camera, color
+from ursina import Sprite, Entity, camera, color, scene
 from ursina.ursinamath import Vec3
 from natsort import natsorted
 import math
@@ -8,6 +8,7 @@ from PIL import Image
 class Background(Entity):
     def __init__(self, z_position, y_position, movement_factor):
         super().__init__()
+
         self.movement_factor = movement_factor
         # Get all background images' path and put into a list.
         self.images = glob.glob("textures/background/*.png")
@@ -44,7 +45,7 @@ class Background(Entity):
                     ppu=16,
                     parent=camera,
                     world_position=Vec3(
-                        camera.position.x, y_position, z_position - i / 1000
+                        camera.position.x, y_position, z_position - i / 20
                     ),
                 ),
                 Entity(
@@ -56,7 +57,7 @@ class Background(Entity):
                     ppu=16,
                     parent=camera,
                     world_position=Vec3(
-                        camera.position.x, y_position, z_position - i / 1000
+                        camera.position.x, y_position, z_position - i / 20
                     ),
                 ),
             )

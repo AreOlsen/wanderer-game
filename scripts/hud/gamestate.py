@@ -16,6 +16,7 @@ class State(Entity):
         if hasattr(self,"BACK"):
             self.BACK.enabled=False
         if hasattr(self,"background_music"):
+            self.background_music.stop()
             self.background_music.enabled=False
         if hasattr(self,"background"):
             self.background.enabled=False
@@ -29,6 +30,7 @@ class State(Entity):
             self.BACK.enabled=True
         if hasattr(self,"background_music"):
             self.background_music.enabled=True
+            self.background_music.play(start=0)
         if hasattr(self,"background"):
             self.background.enabled=True
         

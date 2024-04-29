@@ -15,33 +15,121 @@ from ursina import (
 from ursina.ursinamath import Vec2, Vec3
 import math
 
-class InventoryItem(Draggable):
-    _MAX_STACK_SIZE = 16
-    def __init__(self, inventory_parent, texture, name, description, scale):
+class InventorySlot(Entity):
+    def __init__(self,MAX_STACK_SIZE=16,**kwargs):
         super().__init__()
+        self.MAX_STACK_SIZE = MAX_STACK_SIZE
+        self.num_items_slot = 0 
+        self.item_type = ""
+
+        self.num_items_slot_text = Text(f"{self.num_items_slot}", position=Vec3(-1,-1,-1), scale=10, origin=(0,0), parent=self)
+
+        for key, val in kwargs.items():
+            setattr(self,key,val)
+
+
+class InventoryItem(Draggable):
+    def __init__(self, slot_parent, inventory, texture, item_type, description, scale):
+        super().__init__()
+        #BASIC INIT.
         self.texture = texture
-        self.name = name
+        self.item_type = item_type
         self.description = description
-        self.parent = inventory_parent
+        self.parent = slot_parent
         self.model="quad"
+        self.inventory = inventory
+        
+        #NO HIGHLIGHT COLOUR.
         self.color = color.white
         self.highlight_color = color.white
         self.pressed_color = color.white
-        self.scale = (scale,scale,1)
-        self.collider = BoxCollider(self,center=(0,0,0),size=(scale,scale,1))
-        self.info = Text(f"{self.name}\n{self.description}", position=Vec3(1,1,-1), scale=20, origin=(0,0), parent=self)
+        
+        #COLLIDER.
+        self.scale = (scale,scale,0)
+
+        #INFO ABOUT THE ITEM.
+        self.info = Text(f"{self.item_type}\n{self.description}", position=Vec3(1,1,-1), scale=20, origin=(0,0), parent=self)
         self.info.enabled = False
 
     def drag(self):
         self.org_pos = (self.x,self.y,self.z)
 
-    def drop(self):
-        if self.intersects().hit:
-            print("Intersected something.")
+    def check_traditional_collision(self,ent_2):
+        # Calculate the minimum and maximum x and y values for both objects
+        self_min_x = self.world_position.x - self.scale_x / 2
+        self_max_x = self.world_position.x + self.scale_x / 2
+        self_min_y = self.world_position.y - self.scale_y / 2
+        self_max_y = self.world_position.y + self.scale_y / 2
+
+        ent_2_min_x = ent_2.world_position.x - ent_2.scale_x / 2
+        ent_2_max_x = ent_2.world_position.x + ent_2.scale_x / 2
+        ent_2_min_y = ent_2.world_position.y - ent_2.scale_y / 2
+        ent_2_max_y = ent_2.world_position.y + ent_2.scale_y / 2
+
+        # Check for collision
+        if (self_min_x <= ent_2_max_x and self_max_x >= ent_2_min_x) and \
+        (self_min_y <= ent_2_max_y and self_max_y >= ent_2_min_y):
+            return True
         else:
-            self.position=self.org_pos
+            return False
 
+    def move_to_slot(self,inventory_slot_chosen):
+        #If not empty or not correct item in slot.
+        if inventory_slot_chosen.item_type != "" or inventory_slot_chosen.item_type!=self.item_type:
+            self.move_back()
+        #If there is space available in the slot.
+        if inventory_slot_chosen.num_items_slot<inventory_slot_chosen.MAX_STACK_SIZE:
+            #If the new value of the next is less than max size.
+            if inventory_slot_chosen.num_items_slot+self.parent.num_items_slot<=inventory_slot_chosen.MAX_STACK_SIZE:
+                delete_self = False
+                #If there is no displaying item object already there.
+                if inventory_slot_chonsen.num_items_slot==0:
+                    self.parent = inventory_slot_chosen
+                    self.position=Vec3(0,0,-0.1)
+                #Else we just do the math addition and delete ourselves.
+                else:
+                    delete_self = True
+                #Update the new slots item count.
+                inventory_slot_chosen.num_items_slot+=self.parent.num_items_slot
+                #If we require deleting ourselves.
+                if delete_self:
+                    destroy(self)
+                return True
+            else:
+                self.move_back()
+                return False
+        else:
+            self.move_back()
+            return False
 
+    def move_back(self):
+        self.position=self.org_pos
+
+    def drop(self):
+        #HERE A MORE TRADITIONAL COLLISION CHECK IS IMPLEMENTED.
+        #THIS IS BECAUSE WE DON'T WANT THE INVENTORY SLOTS TO HAVE COLLISION BOXES.
+        #AS THIS WOULD MEAN THAT IN GAME ITEMS, LIKE AN ARROW, COULD COLLIDE WITH THE INVENTORY SLOTS.
+        #AND THIS WOULD NOT BE ADVANTAGEOUS.
+        MOVED_TO_SLOT = False
+        #BIG MENU CHECK:
+        for big_inv_slot in self.inventory.big_menu.inventory_items:
+            if big_inv_slot==self.parent:
+                continue
+            print(self.check_traditiona_collision(big_inv_slot))
+            if self.check_traditiona_collision(big_inv_slot):
+                MOVED_TO_SLOT=self.move_to_slot(big_inv_slot)
+                break
+        #SMELL MENU CHECK.
+        if MOVED_TO_SLOT == False:
+            for small_inv_slot in self.inventory.small_menu.inventory_items:
+                if small_inv_slot == self.parent:
+                    continue
+                if self.check_traditiona_collision(big_inv_slot):
+                    MOVED_TO_SLOT=self.move_to_slot(small_inv_slot)
+                    break
+        #IF NOT GOING INTO A NEW SLOT, JUST MOVE BACK.
+        if MOVED_TO_SLOT == False:
+            self.move_back()
 
 class BigInventory(Entity):
     def __init__(self):
@@ -62,17 +150,16 @@ class BigInventory(Entity):
         for x in range(self.GRID_X):
             for y in range(self.GRID_Y):
                 self.inventory_items.append(
-                    Entity(
+                    InventorySlot(
                         model="quad",
                         texture="textures/hud/inventory/item_holder.png",
                         parent=camera.ui,
-                        scale=item_holder_scale,
+                        scale=(item_holder_scale,item_holder_scale,0),
                         position=Vec3(
                             -0.65*self.scale_x/2+item_holder_distance+item_holder_scale*(x+0.5)-(0.05)*((-1)**(math.floor(x/(self.GRID_X/2)))),
                             -0.65*self.scale_y/2+item_holder_distance+item_holder_scale*(y+0.5)-0.02,
                             z=-0.1
                         ),
-                        collider="box",
                         enabled=False
                     )
                 )
@@ -110,7 +197,7 @@ class SmallInventory(Entity):
         item_holder_scale = (self.scale_x - item_holder_distance * 2) / self.MINI_GRID_X
 
         self.inventory_items = [
-            Entity(
+            InventorySlot(
                 model="quad",
                 texture=(
                     "textures/hud/inventory/item_holder.png"
@@ -120,6 +207,7 @@ class SmallInventory(Entity):
                 parent=camera.ui,
                 scale_x=item_holder_scale,
                 scale_y=min(4 / 9 * self.scale_y, item_holder_scale),
+                scale_z=0,
                 position=Vec3(
                     self.position.x
                     - self.scale_x / 2
@@ -176,7 +264,7 @@ class Inventory(Entity):
     You've got one grid of squares, in each square you can have one item
     Stacking upwards towards 16 before a new slot is filled.
     You've also got a smaller inv for quick-switching items, this one holds one item per slot.
-    When I is pressed the big inventory is shown, else the smaller one is shown.
+    When 'I' is pressed the big inventory is shown, else the smaller one is shown.
     """
 
     def __init__(self):

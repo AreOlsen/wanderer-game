@@ -16,15 +16,7 @@ class NewGameMenu(MenuState):
         SAVE_NAME = InputButtonField(texture="textures/hud/board.png", scale_x=0.3,scale_y=0.1, text="Save name")
         SEED = InputButtonField(texture="textures/hud/board.png", scale_x=0.3,scale_y=0.1, text="Seed")
         CHOICES = ButtonChoice(("Easy", "Medium", "Hard"), texture="textures/hud/board.png", min_choice=1, max_choice=1)
-        #PURIFY SEED.
-        _seed = "0"
-        for char in SEED.text:
-            if char.isdigit():
-                _seed+=char
-            else:
-                _seed+="0"
-        _seed=int(_seed)
-        NEW_GAME = NewGameButton(texture="textures/hud/board.png", scale_x=0.3,scale_y=0.1, save_name=SAVE_NAME.text, state_changer=state_changer, text="Start", seed=_seed,difficulty=CHOICES.value)
+        NEW_GAME = NewGameButton(texture="textures/hud/board.png", scale_x=0.3,scale_y=0.1, save_name_ref=SAVE_NAME, state_changer=state_changer, text="Start", seed_ref=SEED, difficulty_ref=CHOICES)
         self.add_element(SEED)
         self.add_element(SAVE_NAME)
         self.add_element(CHOICES)
