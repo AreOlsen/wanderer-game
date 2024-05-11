@@ -1,1 +1,44 @@
-{}
+{
+    "guns":{
+    },
+    "food":{
+        "steak":{
+            "category":"food",
+            "health_increase":15,
+            "texture":"textures/items/steak.png",
+            "crafting_slots":[]
+        },
+        "beer":{
+            "category":"food",
+            "health_increase":20,
+            "texture":"textures/items/Beer.png",
+            "crafting_slots":[]
+        },
+        "eggs":{
+            "category":"food",
+            "health_increase":10,
+            "texture":"textures/items/Eggs.png",
+            "crafting_slots":[]
+        },
+        "fish":{
+            "category":"food",
+            "health_increase":15,
+            "texture":"textures/items/Fish.png",
+            "crafting_slots":[]
+        },
+        "jam":{
+            "category":"food",
+            "health_increase":13,
+            "texture":"textures/items/Jam.png",
+            "crafting_slots":[]
+        },
+        "wine":{
+            "category":"food",
+            "health_increase":15,
+            "texture":"textures/items/Wine.png",
+            "crafting_slots":[]
+        }
+    },
+    "building_structures":{},
+    "handheld_weapons":{}
+}

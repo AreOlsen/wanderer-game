@@ -10,10 +10,18 @@ from ursina import (
     BoxCollider,
     Text,
     color,
-    mouse
+    mouse,
+    destroy
 )
-from ursina.ursinamath import Vec2, Vec3
+
+from scripts.world.world import World
+from scripts.moving_object import MovingObject
+from ursina.ursinamath import Vec2, Vec3, distance
+import json
 import math
+import numpy as np
+import copy
+
 
 class InventorySlot(Entity):
     def __init__(self,MAX_STACK_SIZE=16,**kwargs):
@@ -21,21 +29,30 @@ class InventorySlot(Entity):
         self.MAX_STACK_SIZE = MAX_STACK_SIZE
         self.num_items_slot = 0 
         self.item_type = ""
+        self.visualizer_entity = None
 
-        self.num_items_slot_text = Text(f"{self.num_items_slot}", position=Vec3(-1,-1,-1), scale=10, origin=(0,0), parent=self)
+        self.num_items_slot_text = Text(f"{self.num_items_slot}", position=Vec3(-0.3,-0.3,-1), scale=10, origin=(0,0), parent=self)
 
         for key, val in kwargs.items():
             setattr(self,key,val)
 
 
+
 class InventoryItem(Draggable):
+    """
+        This is a class representing the visual item on the inventory.
+        It houses all the information regarding movement of items, removal, etc.
+    """
     def __init__(self, slot_parent, inventory, texture, item_type, description, scale):
         super().__init__()
         #BASIC INIT.
         self.texture = texture
         self.item_type = item_type
         self.description = description
-        self.parent = slot_parent
+        self.slot_parent = slot_parent
+        self.enabled=self.slot_parent.enabled
+        self.parent=camera.ui
+        self.world_position=self.slot_parent.world_position
         self.model="quad"
         self.inventory = inventory
         
@@ -51,27 +68,33 @@ class InventoryItem(Draggable):
         self.info = Text(f"{self.item_type}\n{self.description}", position=Vec3(1,1,-1), scale=20, origin=(0,0), parent=self)
         self.info.enabled = False
 
+
+
     def drag(self):
         self.org_pos = (self.x,self.y,self.z)
 
+
+
     def check_traditional_collision(self,ent_2):
         # Calculate the minimum and maximum x and y values for both objects
-        self_min_x = self.world_position.x - self.scale_x / 2
-        self_max_x = self.world_position.x + self.scale_x / 2
-        self_min_y = self.world_position.y - self.scale_y / 2
-        self_max_y = self.world_position.y + self.scale_y / 2
+        self_min_x = self.world_position.x - self.scale_x
+        self_max_x = self.world_position.x + self.scale_x
+        self_min_y = self.world_position.y - self.scale_y
+        self_max_y = self.world_position.y + self.scale_y
 
-        ent_2_min_x = ent_2.world_position.x - ent_2.scale_x / 2
-        ent_2_max_x = ent_2.world_position.x + ent_2.scale_x / 2
-        ent_2_min_y = ent_2.world_position.y - ent_2.scale_y / 2
-        ent_2_max_y = ent_2.world_position.y + ent_2.scale_y / 2
+        ent_2_min_x = ent_2.world_position.x - ent_2.scale_x
+        ent_2_max_x = ent_2.world_position.x + ent_2.scale_x
+        ent_2_min_y = ent_2.world_position.y - ent_2.scale_y
+        ent_2_max_y = ent_2.world_position.y + ent_2.scale_y
 
         # Check for collision
         if (self_min_x <= ent_2_max_x and self_max_x >= ent_2_min_x) and \
-        (self_min_y <= ent_2_max_y and self_max_y >= ent_2_min_y):
+            (self_min_y <= ent_2_max_y and self_max_y >= ent_2_min_y):
             return True
         else:
             return False
+
+
 
     def move_to_slot(self,inventory_slot_chosen):
         #If not empty or not correct item in slot.
@@ -80,17 +103,18 @@ class InventoryItem(Draggable):
         #If there is space available in the slot.
         if inventory_slot_chosen.num_items_slot<inventory_slot_chosen.MAX_STACK_SIZE:
             #If the new value of the next is less than max size.
-            if inventory_slot_chosen.num_items_slot+self.parent.num_items_slot<=inventory_slot_chosen.MAX_STACK_SIZE:
+            if inventory_slot_chosen.num_items_slot+self.slot_parent.num_items_slot<=inventory_slot_chosen.MAX_STACK_SIZE:
                 delete_self = False
                 #If there is no displaying item object already there.
-                if inventory_slot_chonsen.num_items_slot==0:
-                    self.parent = inventory_slot_chosen
-                    self.position=Vec3(0,0,-0.1)
+                if inventory_slot_chosen.num_items_slot==0:
+                    self.slot_parent = inventory_slot_chosen
+                    self.slot_parent.visualizer_entity = inventory_slot_chosen
+                    self.world_position=inventory_slot_chosen.world_position
                 #Else we just do the math addition and delete ourselves.
                 else:
                     delete_self = True
                 #Update the new slots item count.
-                inventory_slot_chosen.num_items_slot+=self.parent.num_items_slot
+                inventory_slot_chosen.num_items_slot+=self.slot_parent.num_items_slot
                 #If we require deleting ourselves.
                 if delete_self:
                     destroy(self)
@@ -102,8 +126,34 @@ class InventoryItem(Draggable):
             self.move_back()
             return False
 
+
+
     def move_back(self):
         self.position=self.org_pos
+        
+
+
+    def drop_item(self):
+        #We need to add the dropped items to the chunk entities.
+        chunk_pos = self.inventory.player.world.pos_to_chunk_indicies(self.inventory.player)
+        item = MovingObject(texture=self.texture, model="quad",scale=0.5,velocity=Vec2(0,1),gravity=-4.905,collides=True, item_type=self.item_type, num_items=self.slot_parent.num_items_slot, description=self.description)
+        item.world_position=Vec3(copy.copy(self.inventory.player.world_position.x), copy.copy(self.inventory.player.world_position.y)+1,copy.copy(self.inventory.player.world_position.z))
+        self.inventory.player.world.all_chunks[chunk_pos].entities.append(item)
+        self.slot_parent.num_items_slot=0
+        self.slot_parent.item_type=""
+        self.slot_parent.num_items_slot_text = Text(f"{self.slot_parent.num_items_slot}", position=Vec3(-0.3,-0.3,-1), scale=10, origin=(0,0), parent=self)
+        destroy(self)
+
+
+
+    def update(self):
+        super().update()
+
+        #Drop item.
+        if self.hovered and mouse.right:
+            self.drop_item()
+
+
 
     def drop(self):
         #HERE A MORE TRADITIONAL COLLISION CHECK IS IMPLEMENTED.
@@ -113,40 +163,124 @@ class InventoryItem(Draggable):
         MOVED_TO_SLOT = False
         #BIG MENU CHECK:
         for big_inv_slot in self.inventory.big_menu.inventory_items:
-            if big_inv_slot==self.parent:
+            if big_inv_slot==self.slot_parent:
                 continue
-            print(self.check_traditiona_collision(big_inv_slot))
-            if self.check_traditiona_collision(big_inv_slot):
+            if self.check_traditional_collision(big_inv_slot):
                 MOVED_TO_SLOT=self.move_to_slot(big_inv_slot)
                 break
         #SMELL MENU CHECK.
         if MOVED_TO_SLOT == False:
             for small_inv_slot in self.inventory.small_menu.inventory_items:
-                if small_inv_slot == self.parent:
+                if small_inv_slot == self.slot_parent:
                     continue
-                if self.check_traditiona_collision(big_inv_slot):
+                if self.check_traditional_collision(small_inv_slot):
                     MOVED_TO_SLOT=self.move_to_slot(small_inv_slot)
                     break
         #IF NOT GOING INTO A NEW SLOT, JUST MOVE BACK.
         if MOVED_TO_SLOT == False:
             self.move_back()
 
+
+
+class CraftingItemSlot(Entity):
+    _craftable_items_data = json.load(open("scripts/objects/items.json"))
+    def __init__(self, inventory,**kwargs):
+        super().__init__()
+        self.inventory = inventory
+        self.parent=camera.ui
+        self.model="quad"
+        for key,val in kwargs.items():
+            setattr(self,key,val)
+        self.visualiser_entity = Entity(parent=self,texture="",scale=(self.scale_x*0.8,self.scale_y*0.8,0), position=Vec3(0,0,-2))
+        self.item_type=""
+
+    def update(self):
+        if self.inventory.big_menu.enabled == True:
+            crafting_item = self.check_for_craftable_item()
+            if crafting_item!=None:
+                self.visualiser_entity.texture=crafting_item["texture"]
+                self.item_type=crafting_item["item_type"]
+
+    def check_for_craftable_item(self):
+        for craftable_item_category in CraftingItemSlot._craftable_items_data:
+            for item in CraftingItemSlot._craftable_items_data[craftable_item_category]:
+                #CHECK IF THE CURRENT CRAFTING_SLOTS' CONFIG IS THE ITEM'S CONFIFG.
+                cur_config = True
+                for slot_i in range(len(self.inventory.big_menu.crafting_slots)):
+                    if self.inventory.big_menu.crafting_slots[slot_i].item_type == CraftingItemSlot._craftable_items_data[craftable_item_category][item]["crafting_slots"][slot_i]["item_type"]:
+                        if self.inventory.big_menu.crafting_slots[slot_i].num_items_slot < CraftingItemSlot._craftable_items_data[craftable_item_category][item]["crafting_slots"][slot_i]["num_items_slot"]:
+                            cur_config=False
+                    else:   
+                        cur_config=False
+                #IF THIS IS THE CORRECT CONFIG - RETURN THE ITEM DATA.
+                if cur_config==True:
+                    return item
+        return None
+
+
+    def create_item_entity(self,item_data):
+        chunk_indicies = self.inventory.player.world.pos_to_chunk_indicies(self.inventory.player.world_position)
+        item = MovingObject(velocity=Vec2(0,1),gravity=-4.905,collides=True, scale=0.5, texture=self.texture, model="quad", item_type=item_data["item_type"], num_items=item_data["num_items"], description=item_data["description"], item_category=item_data["category"])
+        item.world_position=Vec3(self.inventory.player.world_position.x, self.inventory.player.world_position.y+1,self.inventory.player.world_position.z)
+        self.inventory.player.world.all_chunks[chunk_indicies].entities.append(item)
+
+    def craft_item(self,item_to_craft):
+        #Remove the used materials.
+        for i in range(self.inventory.big_menu.crafting_slots):
+            crafting_slot = self.inventory.big_menu.craftings_slots[i]
+            if crafting_slot.item_type == item_to_craft["crafting_slots"][i]["item_type"]:
+                if crafting_slot.num_items_slot > item_to_craft["crafting_slots"][i]["num_items"]:
+                    #If left other items - > reduce the num items count.
+                    crafting_slot.num_items_slot-=item_to_craft["crafting_slots"][i]["num_items"]
+                elif crafting_slot.num_items_slot == item_to_craft["crafting_slots"][i]["num_items"]:
+                    #If we have exactly the right num of the item we need to delete the visualizer entity.
+                    crafting_slot.num_items_slot=0
+                    crafting_slot.item_type=""
+                    destroy(crafting_slot.visualizer_entity)
+
+        #Try to find a possible slot.
+        slot = self.inventory.find_possible_slot(item_to_craft["item_type"],item_to_craft["num_items"])
+        #If none found -> look for free slot.
+        if slot==None:
+            slot = self.inventory.find_free_slot()
+        #No slots -> drop the new item.
+        if slot==None:
+            self.create_item_entity(item_to_craft)
+            return
+        
+        #Put the crafted item into the inventory
+        if slot.num_items_slot==0:
+            slot.num_items_slot=item_to_craft["num_items"]
+            slot.item_type=item_to_craft["item_type"]
+            slot.num_items_slot_text = Text(f"{slot.num_items_slot}", position=Vec3(-0.3,-0.3,-1), scale=10, origin=(0,0), parent=self)
+            inv_item = InventoryItem(slot_parent=slot, inventory=self,texture=item_to_craft["texture"],item_type=item_to_craft["item_type"],description=item_to_craft["description"],scale=0.05)
+        #If it already exists there.
+        else:
+            slot.num_items_slot+=item_to_craft["num_items"]
+        
+
+
 class BigInventory(Entity):
-    def __init__(self):
+    def __init__(self, inventory):
         super().__init__()
         # INIT BIG INVENTORY.
         # Small inventory can only hold one item per slot, big one 16.
         self.GRID_Y = 5
-        self.GRID_X = 4
+        self.GRID_X = 2
+        self.CRAFTING_GRID_X=3
+        self.CRAFTING_GRID_Y=3
         self.parent = camera.ui
         self.position=Vec3(0,0,0)
         self.scale = 0.65
         self.model = "quad"
         self.texture = "textures/hud/inventory/static.png"
         self.inventory_items = []
+        self.crafting_slots = []
 
-        item_holder_distance = 0.65*self.scale_x/30
-        item_holder_scale = (0.65*self.scale_x-(self.GRID_X-2)*item_holder_distance)/self.GRID_X
+        
+        #SPAWN IN THE SLOTS FOR HOLDING ITEMS.
+        item_holder_distance = 0.5*0.65*self.scale_x/30
+        item_holder_scale = (0.5*0.65*self.scale_x-(self.GRID_X-2)*item_holder_distance)/self.GRID_X
         for x in range(self.GRID_X):
             for y in range(self.GRID_Y):
                 self.inventory_items.append(
@@ -156,23 +290,68 @@ class BigInventory(Entity):
                         parent=camera.ui,
                         scale=(item_holder_scale,item_holder_scale,0),
                         position=Vec3(
-                            -0.65*self.scale_x/2+item_holder_distance+item_holder_scale*(x+0.5)-(0.05)*((-1)**(math.floor(x/(self.GRID_X/2)))),
-                            -0.65*self.scale_y/2+item_holder_distance+item_holder_scale*(y+0.5)-0.02,
+                            -0.65*self.scale_x/2+item_holder_distance+item_holder_scale*(x+0.5)+(0.25),
+                            -0.65*self.scale_y/2+item_holder_distance+item_holder_scale*(y+0.5)-0.03,
                             z=-0.1
                         ),
                         enabled=False
                     )
                 )
 
+
+
+        #SPAWN IN THE SLOTS FOR CRAFTING.
+        crafting_item_holder_distance = 0.5*0.65*self.scale_x/30
+        crafting_item_holder_scale = (0.5*0.65*self.scale_x-(self.CRAFTING_GRID_X-2)*item_holder_distance)/self.CRAFTING_GRID_X
+        for x in range(self.CRAFTING_GRID_X):
+            for y in range(self.CRAFTING_GRID_Y):
+                self.crafting_slots.append(
+                    InventorySlot(
+                        model="quad",
+                        texture="textures/hud/inventory/item_holder.png",
+                        parent=camera.ui,
+                        scale=(crafting_item_holder_scale,crafting_item_holder_scale,0),
+                        position=Vec3(
+                            -0.65*self.scale_x/2+crafting_item_holder_distance+crafting_item_holder_scale*(x+0.5)-(0.05),
+                            -0.65*self.scale_y/2+crafting_item_holder_distance+crafting_item_holder_scale*(y+0.5)+0.25,
+                            z=-0.1
+                        ),
+                        enabled=False
+                    )
+                )
+
+        #SPAWN IN THE CRAFTING SLOT - THE SLOT YOU GET ITEMS FROM.
+        self.crafting_item_slot = CraftingItemSlot(
+                        texture="textures/hud/inventory/item_holder.png",
+                        scale=(item_holder_scale,item_holder_scale,0),
+                        position=Vec3(
+                            self.crafting_slots[int(math.floor(len(self.crafting_slots)/2))].x,
+                            -0.65*self.scale_y/2+item_holder_distance+item_holder_scale*(y+0.5)-0.1,
+                            z=-0.1
+                        ),
+                        enabled=False,
+                        inventory=inventory
+                    )
+
     def enable(self):
         for i in self.inventory_items:
             i.enabled = True
+        for ii in self.crafting_slots:
+            ii.enabled=True
+        self.crafting_item_slot.enabled=True
         self.enabled = True
+
+
 
     def disable(self):
         for i in self.inventory_items:
             i.enabled = False
+        for i in self.crafting_slots:
+            i.enabled=False
+        self.crafting_item_slot.enabled=False
         self.enabled = False
+
+
 
 class SmallInventory(Entity):
     def __init__(self):
@@ -216,10 +395,13 @@ class SmallInventory(Entity):
                     self.position.y,
                     z=-0.1,
                 ),
-                collider="box"
+                collider="box",
+                MAX_STACK_SIZE=1
             )
             for i in range(self.MINI_GRID_X)
         ]
+
+
 
     def check_slot_focused(self):
         """Checks and updates which slot is focused."""
@@ -247,10 +429,14 @@ class SmallInventory(Entity):
                     "textures/hud/inventory/item_holder_selected.png"
                 )
 
+
+
     def enable(self):
         for i in self.inventory_items:
             i.enabled = True
         self.enabled = True
+
+
 
     def disable(self):
         for i in self.inventory_items:
@@ -267,19 +453,100 @@ class Inventory(Entity):
     When 'I' is pressed the big inventory is shown, else the smaller one is shown.
     """
 
-    def __init__(self):
+
+
+    def __init__(self, player, pick_up_radius=1.5):
         super().__init__()
-        self.big_menu = BigInventory()
+        self.big_menu = BigInventory(inventory=self)
         self.big_menu.enabled=False
         self.small_menu = SmallInventory()
+        self.small_menu.inventory_items[0].children.append(InventoryItem(self.small_menu.inventory_items[0],inventory=self,texture="brick",item_type="brick",description="brick", scale=0.05))
+        self.player = player
+        self.pick_up_radius=pick_up_radius
+
 
     def input(self, key):
+        #PICK UP ITEM.
+        if key=="e":
+            #We get all the possible entities that are close to the player
+            #We may also need to check the other chunks as the player may be on the edge.
+            all_entities_to_check = {}
+            for x in np.arange(-self.pick_up_radius/2,self.pick_up_radius/2,0.1):
+                for y in np.arange(-self.pick_up_radius/2,self.pick_up_radius/2,0.1):
+                    cur_chunk_index = self.player.world.pos_to_chunk_indicies(self.player.world_position+Vec3(x,y,0))
+                    if cur_chunk_index not in all_entities_to_check and cur_chunk_index in self.player.world.all_chunks:
+                            all_entities_to_check[cur_chunk_index]=self.player.world.all_chunks[cur_chunk_index].entities
+            for chunk_ents in list(all_entities_to_check.values()):
+                for ent in chunk_ents:
+                    #Check if it is an item.
+                    if hasattr(ent,"item_type"):
+                        if distance(ent.world_position,self.player.world_position)<=self.pick_up_radius:
+                            self.pick_up_item(ent)
+                            break
+        ##ENABLE / DISABLE MENUS.
         if key=="i":
             if self.big_menu.enabled:
                 self.big_menu.disable()
             else:
                 self.big_menu.enable()
 
+
+
     def update(self):
         self.small_menu.check_slot_focused()
+
+
+
+    def find_free_slot(self):
+        """
+        THIS FUNCTION ATTEMPTS TO FIND A FREE SLOT WITHOUT ANY ITEM DATA.
+        """
+
+        for slot in self.small_menu.inventory_items:
+            if slot.item_type=="":
+                return slot
+
+        for slot in self.big_menu.inventory_items:
+            if slot.item_type=="":
+                return slot
         
+        return None
+
+
+
+    def find_possible_slot(self, item_type, item_num):
+        """
+        THIS FUNCTION ATTEMPTS TO FIND A SLOT WITH THE SAME ITEM DATA - THEN WE JUST INCREMENT THE NUM ITEM COUNT. 
+        """
+        for slot in self.small_menu.inventory_items:
+            if slot.item_type==item_type and item_num+slot.num_items_slot<slot.MAX_STACK_SIZE:
+                return slot
+
+        for slot in self.big_menu.inventory_items:
+            if slot.item_type==item_type and item_num+slot.num_items_slot<slot.MAX_STACK_SIZE:
+                return slot
+        
+        return None
+    
+
+
+    def pick_up_item(self, item_on_ground):
+        #Try to find a possible slot.
+        slot = self.find_possible_slot(item_on_ground.item_type,item_on_ground.num_items)
+        #If none found -> look for free slot.
+        if slot==None:
+            slot = self.find_free_slot()
+        #No slots -> dont pick up item.
+        if slot==None:
+            return
+
+        #Pick up the item:
+        if slot.num_items_slot==0:
+            slot.num_items_slot=item_on_ground.num_items
+            slot.item_type=item_on_ground.item_type
+            slot.num_items_slot_text = Text(f"{slot.num_items_slot}", position=Vec3(-0.3,-0.3,-1), scale=10, origin=(0,0), parent=self)
+            inv_item = InventoryItem(slot_parent=slot, inventory=self,texture=item_on_ground.texture,item_type=item_on_ground.item_type,description=item_on_ground.description,scale=0.05)
+            destroy(item_on_ground)
+        else:
+            slot.num_items_slot+=item_on_ground.num_items
+            destroy(item_on_ground)

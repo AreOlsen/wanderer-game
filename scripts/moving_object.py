@@ -21,6 +21,10 @@ class MovingObject(Entity):
         **kwargs,
     ):
         super().__init__()
+
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
         self.gravity = gravity
         self.velocity = velocity
         self.bounce_upwards = bounce_upwards
@@ -30,13 +34,12 @@ class MovingObject(Entity):
         self.acceleration = acc_ex_grav
         self.collides = collides
         self.rotate = rotate
-        self.collider = BoxCollider(self, center=(0, 0, 0), size=(1, 1, 0))
+        self.collider = BoxCollider(self, center=(0, 0, 0), size=(self.scale_x, self.scale_y, 0))
+        self.collider.visible=True
         self.texture = None
         self.parent_on_hit = parent_on_hit
         self.acc_incl_grav = self.acceleration + Vec2(0, -abs(self.gravity))
 
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     def update(self):
         self.update_vel()

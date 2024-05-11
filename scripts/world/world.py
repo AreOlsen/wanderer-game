@@ -10,7 +10,7 @@ import copy
 
 
 class World(Entity):
-    def __init__(self, save_name, player, background, chunk_size=12, save_frequency=3*60, seed=0, difficulty = "Easy"):
+    def __init__(self, save_name, background, chunk_size=12, save_frequency=3*60, seed=0, difficulty = "Easy"):
         self.all_chunks = {}
         self.CHUNK_SIZE = chunk_size
         self.all_chunks_indices = []
@@ -19,7 +19,6 @@ class World(Entity):
         self.save_frequency = save_frequency
         self.time_to_next_save = min(10,save_frequency)
         self.seed=seed
-        self.player=player
         self.background=background
         opensimplex.seed(self.seed)
         self.difficulty = difficulty
@@ -29,14 +28,17 @@ class World(Entity):
         with open(f"data/world_saves/{self.save_name}.pickle", "wb") as handle:
             pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+
     def load_world(self):
         with open(f"data/world_saves/{self.save_name}.pickle", "rb") as handle:
             self = pickle.load(handle)
+
 
     def pos_to_chunk_indicies(self, pos: Vec2) -> Vec2:
         return Vec2(
             math.floor(pos.x / self.CHUNK_SIZE), math.floor(pos.y / self.CHUNK_SIZE)
         )
+
 
     def load_chunks(self):
         # Enable all chunks which are in render view.

@@ -13,12 +13,13 @@ from scripts.hud.inventory import Inventory, InventoryItem
 
 
 class Player(MovingObject):
-    def __init__(self, **kwargs):
+    def __init__(self, world, **kwargs):
         super().__init__(**kwargs)
         self.scale = 1
         self.collider = BoxCollider(self, center=(0, 0, 0), size=(0.5, 0.7, 0))
         self.double_sided = True
-        self.inventory = Inventory()
+        self.inventory = Inventory(player=self)
+        self.world = world
 
         self.animator = Animator(
             animations={

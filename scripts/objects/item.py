@@ -2,10 +2,8 @@ from ursina import Entity, mouse
 from ursina.ursinamath import Vec3
 import math
 
-#NOT SHOWING?
-
 class HoldingItem(Entity):
-    def __init__(self, texture:str, offset:Vec3,min_angle=0, max_angle=360, size=0.1, **kwargs):
+    def __init__(self, texture:str, offset:Vec3, min_angle=0, max_angle=360, size=0.1, **kwargs):
         super().__init__(
             texture=texture,
             size=size,
@@ -20,13 +18,22 @@ class HoldingItem(Entity):
     def calculate_angle_item(self):
         mos_pos = mouse.position
         delta = mos_pos - self.position
-        ex = Vec3(1,0,0)
         angle = math.acos((delta.x)/((delta.x**2+delta.y**2+delta.z**2)**0.5))
         if angle<self.min_angle:
             angle=self.min_angle
         elif angle>self.max_angle:
             angle=self.max_angle
         return angle
+
+class Food(HoldingItem):
+    def __init__(self, hp_increase, player):
+        super().__init__()
+        self.player = player
+        self.hp_increase
+
+    def input(self,key):
+        if key=="e":
+            self.player.health+=self.hp_increase
 
 
 class HandheldWeapon(HoldingItem):
@@ -37,9 +44,9 @@ class HandheldWeapon(HoldingItem):
 
 
 class Gun(HoldingItem):
-    """Gun, this can shoot :D"""
+    """Gun, this can shoot."""
 
-class InventoryItem(Entity):
+class InventoryItem(HoldingItem):
     def __init__(self, **kwargs):
         super().__init__()
         for key, val in kwargs.items():

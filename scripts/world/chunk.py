@@ -9,6 +9,7 @@ import math
 import random
 from scripts.moving_object import MovingObject
 import os
+import copy
 """
 Each chunk consists of two parts.
 One part is the actual chunk, this is what gets rendered.
@@ -40,6 +41,7 @@ class Chunk(Entity):
         self.world_position = top_left_world_position
         self.ground_entity = Entity(world_position=self.world_position,visible=False)
         self.ground_entity.ground_blocks_entities = []
+        self.ground_block_positions = []
         self.background_blocks = []
 
         self.CHUNK_TYPE = list(self._biomes.keys())[
@@ -78,6 +80,7 @@ class Chunk(Entity):
             # Surface height.
             surface_y = 3 * noise2(x=(x + self.world_position.x) * 0.1, y=0)
             blocks_x = []
+            blocks_x_cords = []
             for y in range(int(self.CHUNK_SIZE)):
                 block_cords = Vec2(x, -y)
                 if block_cords.y+self.world_position.y < surface_y:
@@ -106,8 +109,9 @@ class Chunk(Entity):
                         origin=(0,0)
                     )
                     blocks_x.append(block)
+                    blocks_x_cords.append(copy.copy(block.position))
             self.ground_entity.ground_blocks_entities.append(blocks_x)
-
+            self.ground_block_positions.append(blocks_x_cords)
 
     def generate_foliage(self):
         #Info about foliage.

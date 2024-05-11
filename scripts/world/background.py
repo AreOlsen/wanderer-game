@@ -1,4 +1,4 @@
-from ursina import Sprite, Entity, camera, color, scene
+from ursina import Sprite, Entity, camera, color, scene, Texture
 from ursina.ursinamath import Vec3
 from natsort import natsorted
 import math
@@ -16,20 +16,13 @@ class Background(Entity):
         self.images = natsorted(self.images)
         self.y_position = y_position
         # Get the desired 3d z distance from the background object and the camera.
-        z_sum = abs(z_position - camera.position.z)
+        z_sum = abs(z_position - camera.world_position.z)
 
         # The background image object size in x direction.
         self.s_x = 2 * abs(math.tan(math.radians(camera.fov_getter() / 2))) * z_sum
 
-        # We want a constant background colour which is shown when the normal parallax images aren't in view, for empties skies and such.
-        self.constant_sky_background = Sprite(
-            color=color.rgb(118, 184, 226),
-            world_position=Vec3(camera.position.x, camera.position.y, z_position),
-            scale_x=self.s_x,
-            scale_y=self.s_x / camera.aspect_ratio_getter(),
-            parent=camera,
-        )
         self.z_position = z_position
+
 
         # Make the backgrounds into objects using the previous calculated properties.
         # We spawn in two because if the camera is inbetween the need two chunks to show the world continously.
@@ -40,29 +33,40 @@ class Background(Entity):
                     texture=path,
                     model="quad",
                     scale_x=self.s_x,
-                    scale_y=self.s_x
-                    * (Image.open(path).height / Image.open(path).width),
+                    scale_y=self.s_x * (Image.open(path).height / Image.open(path).width),
                     ppu=16,
                     parent=camera,
                     world_position=Vec3(
-                        camera.position.x, y_position, z_position - i / 20
+                        camera.world_position.x, y_position, z_position - i / 20
                     ),
                 ),
                 Entity(
                     texture=path,
                     model="quad",
                     scale_x=self.s_x,
-                    scale_y=self.s_x
-                    * (Image.open(path).height / Image.open(path).width),
+                    scale_y=self.s_x * (Image.open(path).height / Image.open(path).width),
                     ppu=16,
                     parent=camera,
                     world_position=Vec3(
-                        camera.position.x, y_position, z_position - i / 20
+                        camera.world_position.x, y_position, z_position - i/20
                     ),
                 ),
             )
             for i, path in enumerate(self.images, start=1)
         ]
+        
+        # We want a constant background colour which is shown when the normal parallax images aren't in view, for empties skies and such
+        self.constant_sky_background = Entity(
+            parent=camera,
+            texture=Texture(Image.new(mode="RGBA",size=(256,256), color=(118,184,226,256))),
+            color=color.white,
+            model="quad",
+            world_position=Vec3(camera.world_position.x, camera.world_position.y, z_position),
+            scale_x=self.s_x,
+            scale_y=self.s_x / camera.aspect_ratio_getter(),
+            scale_z=0,
+        )
+
 
         #Constant underground background for when we go under the ground.
         #self.constant_underground_background = Sprite(

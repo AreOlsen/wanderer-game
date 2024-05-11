@@ -1,4 +1,4 @@
-from ursina import Sprite, Entity, Texture,Button,Audio,camera
+from ursina import Sprite, Entity, Texture, Button, Audio,camera
 from ursina.ursinamath import Vec2, Vec3
 
 
@@ -8,7 +8,7 @@ class State(Entity):
         super().__init__(entities=entities)
         self.entities=entities
         if len(audio)>0:
-            self.background_music = Audio(sound_file_name=audio, loop=True, autoplay=True, parent=self)
+            self.background_music = Audio(sound_file_name=audio, loop=True, autoplay=False, parent=self)
 
     def on_disable(self):
         for ent in self.entities:
