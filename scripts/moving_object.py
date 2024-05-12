@@ -18,12 +18,12 @@ class MovingObject(Entity):
         bounce_right=False,
         parent_on_hit=False,
         collides=False,
+        destroy_on_hit = False,
+        damage_on_collision=0,
+        chunk_ents = [],
         **kwargs,
     ):
         super().__init__()
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
         self.gravity = gravity
         self.velocity = velocity
@@ -34,12 +34,17 @@ class MovingObject(Entity):
         self.acceleration = acc_ex_grav
         self.collides = collides
         self.rotate = rotate
-        self.collider = BoxCollider(self, center=(0, 0, 0), size=(self.scale_x, self.scale_y, 0))
-        self.collider.visible=True
         self.texture = None
         self.parent_on_hit = parent_on_hit
+        self.destroy_on_hit = destroy_on_hit
         self.acc_incl_grav = self.acceleration + Vec2(0, -abs(self.gravity))
+        self.damage_on_collision = damage_on_collision
+        self.chunk_ents = chunk_ents
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
+        #This is set afterwards as scale can be changed in kwargs and colliders requires scale.
+        self.collider = BoxCollider(self, center=(0, 0, 0), size=(self.scale_x, self.scale_y, 0))
 
     def update(self):
         self.update_vel()
@@ -75,6 +80,8 @@ class MovingObject(Entity):
     def collision_y(self):
         y_next = self.check_next_collision()
         if y_next.hit:
+            if hasattr(y_next.entity, "health"):
+                y_next.entity.health -= self.damage_on_collision
             if self.parent_on_hit:
                 self.parent = y_next.entity
             diff = y_next.world_point - self.position
@@ -102,9 +109,15 @@ class MovingObject(Entity):
                     + (self.collider.size[1]) / 2,
                 )
 
+            if self.destroy_on_hit:
+                self.chunk_ents.remove(self)
+                destroy(self)
+
     def collision_x(self):
         x_next = self.check_next_collision()
         if x_next.hit:
+            if hasattr(x_next.entity, "health"):
+                x_next.entity.health -= self.damage_on_collision
             if self.parent_on_hit:
                 self.parent = x_next.entity
             # Stop velocity x direction.
@@ -121,6 +134,10 @@ class MovingObject(Entity):
                 self.velocity.y,
                 0,
             )
+
+            if self.destroy_on_hit:
+                self.chunk_ents.remove(self)
+                destroy(self)
 
     def collisions(self):
         # We need to check the next y position and check if intersection.

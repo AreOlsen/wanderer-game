@@ -25,10 +25,10 @@ def chance_for_ore_based_on_y(y:float, max_chance=0.25, max_y_level = -5, min_y_
         return max_chance
     else:
         c=4.6 # -math.log(100/99 - 1), bruker modifisert versjon av 1/(1+e^(-bx+c)) for å rekne ut sannsyn.
-        b=2*c
+        b=9.2
         y_under_max_y_level_dist = abs(max_y_level-abs(y))
         range_max_min = abs(max_y_level-min_y_level)
-        return max_chance/(1+math.e**(-b*((y_under_max_y_level_dist)/range_max_min)+c))
+        return max_chance/(1+math.exp(-b*((y_under_max_y_level_dist)/range_max_min)+c))
 
 
 class Chunk(Entity):

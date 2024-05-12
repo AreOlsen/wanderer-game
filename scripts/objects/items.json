@@ -1,44 +1,95 @@
 {
-    "guns":{
+  "guns": {},
+  "food": {
+    "steak": {
+      "category": "food",
+      "health_increase": 15,
+      "texture": "textures/items/steak.png",
+      "crafting_slots": []
     },
-    "food":{
-        "steak":{
-            "category":"food",
-            "health_increase":15,
-            "texture":"textures/items/steak.png",
-            "crafting_slots":[]
-        },
-        "beer":{
-            "category":"food",
-            "health_increase":20,
-            "texture":"textures/items/Beer.png",
-            "crafting_slots":[]
-        },
-        "eggs":{
-            "category":"food",
-            "health_increase":10,
-            "texture":"textures/items/Eggs.png",
-            "crafting_slots":[]
-        },
-        "fish":{
-            "category":"food",
-            "health_increase":15,
-            "texture":"textures/items/Fish.png",
-            "crafting_slots":[]
-        },
-        "jam":{
-            "category":"food",
-            "health_increase":13,
-            "texture":"textures/items/Jam.png",
-            "crafting_slots":[]
-        },
-        "wine":{
-            "category":"food",
-            "health_increase":15,
-            "texture":"textures/items/Wine.png",
-            "crafting_slots":[]
-        }
+    "beer": {
+      "category": "food",
+      "health_increase": 20,
+      "texture": "textures/items/Beer.png",
+      "crafting_slots": []
     },
-    "building_structures":{},
-    "handheld_weapons":{}
+    "eggs": {
+      "category": "food",
+      "health_increase": 10,
+      "texture": "textures/items/Eggs.png",
+      "crafting_slots": []
+    },
+    "fish": {
+      "category": "food",
+      "health_increase": 15,
+      "texture": "textures/items/Fish.png",
+      "crafting_slots": []
+    },
+    "jam": {
+      "category": "food",
+      "health_increase": 13,
+      "texture": "textures/items/Jam.png",
+      "crafting_slots": []
+    },
+    "wine": {
+      "category": "food",
+      "health_increase": 15,
+      "texture": "textures/items/Wine.png",
+      "crafting_slots": []
+    }
+  },
+  "building_structures": {},
+  "handheld_weapons": {
+    "axe": {
+      "category": "handheld_weapons",
+      "damage": 30,
+      "attack_range": 3,
+      "texture": "textures/items/axe.png",
+      "crafting_slots": [
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 }
+      ]
+    },
+    "sword": {
+      "category": "handheld_weapons",
+      "damage": 50,
+      "attack_range": 4,
+      "texture": "textures/items/sword.png",
+      "crafting_slots": [
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 }
+      ]
+    },
+    "dagger": {
+      "category": "handheld_weapons",
+      "damage": 25,
+      "attack_range": 1,
+      "texture": "textures/items/sword.png",
+      "crafting_slots": [
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 }
+      ]
+    }
+  }
 }
