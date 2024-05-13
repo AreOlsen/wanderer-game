@@ -105,12 +105,12 @@ class Player(MovingObject):
                 case "food":
                     self.hold_item = Food(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
                 case "handheld_weapons":
-                    self.hold_item = HandheldWeapon(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
+                    self.hold_item = HandheldWeapon(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
                 case "guns":
-                    self.hold_item = Gun(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
+                    self.hold_item = Gun(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"],  self)
                 case "building_structures":
-                    self.hold_item = BuildingStructure(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
+                    self.hold_item = BuildingStructure(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
                 case _:
-                    self.hold_item = HoldingItem(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
+                    self.hold_item = HoldingItem(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
         else:
             self.hold_item=None

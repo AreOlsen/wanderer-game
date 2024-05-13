@@ -20,6 +20,8 @@ class MovingObject(Entity):
         collides=False,
         destroy_on_hit = False,
         damage_on_collision=0,
+        intersects_with_player=True,
+        player=None,
         chunk_ents = [],
         **kwargs,
     ):
@@ -39,6 +41,8 @@ class MovingObject(Entity):
         self.destroy_on_hit = destroy_on_hit
         self.acc_incl_grav = self.acceleration + Vec2(0, -abs(self.gravity))
         self.damage_on_collision = damage_on_collision
+        self.intersects_with_player = intersects_with_player
+        self.player=player
         self.chunk_ents = chunk_ents
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -73,9 +77,14 @@ class MovingObject(Entity):
         next_hit_ent.collider = BoxCollider(
             next_hit_ent, center=self.collider.center, size=self.collider.size
         )
-        hit = copy.copy(next_hit_ent.intersects(ignore=(self, next_hit_ent)))
-        destroy(next_hit_ent)
-        return hit
+        if self.intersects_with_player == False and self.player!=None:
+            hit = copy.copy(next_hit_ent.intersects(ignore=(self, next_hit_ent, self.player)))
+            destroy(next_hit_ent)
+            return hit
+        else:
+            hit = copy.copy(next_hit_ent.intersects(ignore=(self, next_hit_ent)))
+            destroy(next_hit_ent)
+            return hit
 
     def collision_y(self):
         y_next = self.check_next_collision()

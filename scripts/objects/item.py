@@ -1,4 +1,4 @@
-from ursina import Entity, mouse, time, held_keys, destroy
+from ursina import Entity, mouse, time, held_keys, destroy, BoxCollider, curve, color
 from ursina.ursinamath import Vec3, distance
 import math
 from scripts.moving_object import MovingObject
@@ -49,21 +49,42 @@ class Food(HoldingItem):
 
 class HandheldWeapon(HoldingItem):
     """This is a handheld item."""
-    def __init__(self, attack_range, swing_time, swing_reload_time, attack_damage):
+    def __init__(self, attack_range, swing_time, swing_reload_time, attack_damage, rotation_max=60):
         super().__init__()
         self.range = attack_range
         self.swing_time = swing_time
         self.time_since_last_swing = swing_reload_time
         self.swing_reload_time=swing_reload_time
         self.attack_damage=attack_damage
+        self.rotation_max = rotation_max
+        self.rotation_animation_val = 0
+
+    def rotation(self,x):
+        if 0<=x<=self.swing_time/3:
+            self.rotation_animation_val-=time.dt*((-18/self.rotation_max/((self.swing_time)**2)) * x + 6*(self.rotation_max/self.swing_time))
+        elif self.swing_reload_time/3<=x<=self.swing_reload_time*2/3:
+            return
+        elif self.swing_reload_time*2/3<=x<=self.swing_reload_time:
+            self.rotation_animation_val+=time.dt*(3*self.rotation_max/self.swing_time)
+
 
     def update(self):
         self.time_since_last_swing+=time.dt
+        
+        #Play mathematical swing animation.
+        if self.time_since_last_swing<=self.swing_time:
+            self.rotation(self.time_since_last_swing)
+
+        #Play animation.
+        self.rotation.z = self.calculate_angle_item()+self.rotation_animation_val
 
     def input(self,key):
         if key == "left mouse down" and self.time_since_last_swing>=self.swing_reload_time:
             self.time_since_last_swing=0
+            if hasattr(mouse.hovered_entity, "health"):
+                mouse.hovered_entity.health-=self.attack_damage
 
+                
 
 
 class Gun(HoldingItem):
@@ -79,7 +100,7 @@ class Gun(HoldingItem):
         self.player = player
         self.scale=scale
         self.texture=texture
-        self.offset = offset
+        self.offset=offset
         self.parent=player
         self.position=offset
         self.bullet_damage = bullet_damage
@@ -113,6 +134,35 @@ class Gun(HoldingItem):
 
 
 class BuildingStructure(HoldingItem):
+    def __init__(self, texture, health, scale, player, building_range, building_data):
+        super().__init__()
+        self.player = player
+        self.health = health
+        self.texture = texture
+        self.scale = scale
+        self.building_range = building_range
+        self.building_data = building_data
+        self.visualizer_building_entity = None
+        self.visualizer_building_entity.collider = BoxCollider(self.visualizer_building_entity,center=(), size=self.scale)
+
+    def check_legal_placement(self):
+        hit_info = self.visualizer_building_entity.intersects(ignore=(self,self.player))
+        if hit_info.hit:
+            return False
+        return True
+
+    def update(self):
+        self.visualizer_building_entity.position = mouse.position
+            
+    def input(self,key):
+        if key=="left mouse down":
+            placeable = self.check_legal_placement(self.visualizer_building_entity.position)
+            if placeable and distance(self.player.world_position, self.visualizer_building_entity.world_position)<=self.building_range:
+                chunk_indicies = self.player.world.pos_to_chunk_indicies(self.player.world_position)
+                chunk_ents = self.player.world.all_chunks[chunk_indicies].entities
+                building = MovingObject(texture=self.building_data["texture"], scale=self.building_data["scale"], rotate=False, collides=True,intersects_with_player=False,player=self.player,chunk_ents=chunk_ents, health=self.building_data["health"])
+                building.collider = BoxCollider(building,center=(0,0), size=self.building_data["scale"])
+                chunk_ents.append(building)
 
 
 class InventoryItem(HoldingItem):
