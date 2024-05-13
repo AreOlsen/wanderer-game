@@ -99,18 +99,21 @@ class Player(MovingObject):
 
     def hold_item(self):
         """This makes the player hold the item that is selected in the quick menu,"""
-        selected_item_data = self.inventory.small_menu.inventory_items[self.inventory.small_menu.selected_item_index]
-        if "category" in selected_item_data.keys():
-            match selected_item_data["category"]:
-                case "food":
-                    self.hold_item = Food(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], selected_item_data["hp_increase"], self)
-                case "handheld_weapons":
-                    self.hold_item = HandheldWeapon(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
-                case "guns":
-                    self.hold_item = Gun(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"],  self)
-                case "building_structures":
-                    self.hold_item = BuildingStructure(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
-                case _:
-                    self.hold_item = HoldingItem(selected_item_data["texture"], selected_item_data["offset"], 0, 0, selected_item_data["scale"], self)
+        selected_item_slot = self.inventory.small_menu.inventory_items[self.inventory.small_menu.selected_item_index]
+        if hasattr(selected_item_slot, "item_data"):
+            if "category" in selected_item_slot.keys():
+                match selected_item_slot["category"]:
+                    case "food":
+                        self.hold_item = Food(selected_item_slot["texture"], selected_item_slot["offset"], selected_item_slot, 0, 0, selected_item_slot["scale"], selected_item_slot["hp_increase"], self)
+                    case "handheld_weapons":
+                        self.hold_item = HandheldWeapon(selected_item_slot["texture"], selected_item_slot["offset"], selected_item_slot, 0, 360, selected_item_slot["scale"], selected_item_slot["attack_range"], selected_item_slot["swing_time"], selected_item_slot["swing_reload_time"], selected_item_slot["attack_damage"],selected_item_slot["swing_rotation_max"],self)
+                    case "guns":
+                        self.hold_item = Gun(selected_item_slot["texture"], selected_item_slot["offset"], selected_item_slot, 0, 360, selected_item_slot["scale"], self, selected_item_slot["mag_size"], selected_item_slot["reload_time"],selected_item_slot["fire_rate"],selected_item_slot["bullet_scale"],selected_item_slot["bullet_texture"],selected_item_slot["bullet_offset"], selected_item_slot["bullet_damage"])
+                    case "building_structures":
+                        self.hold_item = BuildingStructure(selected_item_slot["texture"], selected_item_slot["offset"], selected_item_slot, 0, 0, selected_item_slot["scale"], self, selected_item_slot["health"], selected_item_slot["buildling_range"], selected_item_slot["building_data"])
+                    case _:
+                        self.hold_item = HoldingItem(selected_item_slot["texture"], selected_item_slot["offset"], selected_item_slot, 0, 0, selected_item_slot["scale"])
+            else:
+                self.hold_item=None
         else:
             self.hold_item=None

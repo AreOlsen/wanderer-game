@@ -36,8 +36,8 @@ class HoldingItem(Entity):
             destroy(self.inventory_slot.visualizer_entity)
 
 class Food(HoldingItem):
-    def __init__(self, texture, offset,min_angle, max_angle, size, hp_increase, player):
-        super().__init__(texture,offset,min_angle,max_angle,size)
+    def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, hp_increase, player):
+        super().__init__(texture,offset,inventory_slot,min_angle,max_angle,size)
         self.player = player
         self.hp_increase = hp_increase
 
@@ -49,8 +49,8 @@ class Food(HoldingItem):
 
 class HandheldWeapon(HoldingItem):
     """This is a handheld item."""
-    def __init__(self, attack_range, swing_time, swing_reload_time, attack_damage, rotation_max=60):
-        super().__init__()
+    def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, attack_range, swing_time, swing_reload_time, attack_damage, rotation_max=60):
+        super().__init__(texture,offset,inventory_slot,min_angle,max_angle, size)
         self.range = attack_range
         self.swing_time = swing_time
         self.time_since_last_swing = swing_reload_time
@@ -89,8 +89,8 @@ class HandheldWeapon(HoldingItem):
 
 class Gun(HoldingItem):
     """Gun, this can shoot."""
-    def __init__(self, scale, texture, offset, mag_size, reload_time, fire_rate_rps, player, bullet_scale, bullet_texture, bullet_offset, bullet_damage):
-        super().__init__()
+    def __init__(self, scale, texture, offset, inventory_slot, min_angle, max_angle, size, player, mag_size, reload_time, fire_rate_rps, bullet_scale, bullet_texture, bullet_offset, bullet_damage):
+        super().__init__(texture,offset,inventory_slot,min_angle,max_angle,size)
         self.left_in_mag = mag_size
         self.mag_size = mag_size
         self.reload_time = reload_time
@@ -101,7 +101,6 @@ class Gun(HoldingItem):
         self.scale=scale
         self.texture=texture
         self.offset=offset
-        self.parent=player
         self.position=offset
         self.bullet_damage = bullet_damage
         self.bullet_texture = bullet_texture
@@ -134,12 +133,10 @@ class Gun(HoldingItem):
 
 
 class BuildingStructure(HoldingItem):
-    def __init__(self, texture, health, scale, player, building_range, building_data):
-        super().__init__()
+    def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, player, health, building_range, building_data):
+        super().__init__(texture,offset, inventory_slot,min_angle,max_angle, size)
         self.player = player
         self.health = health
-        self.texture = texture
-        self.scale = scale
         self.building_range = building_range
         self.building_data = building_data
         self.visualizer_building_entity = None
