@@ -4,13 +4,14 @@ import math
 from scripts.moving_object import MovingObject
 
 class HoldingItem(Entity):
-    def __init__(self, texture:str, offset:Vec3, inventory_slot, min_angle=0, max_angle=360, size=0.1, **kwargs):
+    def __init__(self, texture:str, offset:Vec3, inventory_slot, player, min_angle=0, max_angle=360, size=0.1, **kwargs):
         super().__init__(
             texture=texture,
             size=size,
             position=Vec3(0,1,-0.001)+offset,
             double_sided=True,
         )
+        self.parent = player
         self.min_angle=min_angle
         self.max_angle=max_angle
         self.inventory_slot=inventory_slot
@@ -34,10 +35,11 @@ class HoldingItem(Entity):
         self.inventory_slot.visualizer_entity.num_items_slot_text.text=f"{self.inventory_slot.visualizer_entity.num_items}"
         if self.inventory_slot.num_items_slot==0:
             destroy(self.inventory_slot.visualizer_entity)
+            destroy(self)
 
 class Food(HoldingItem):
     def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, hp_increase, player):
-        super().__init__(texture,offset,inventory_slot,min_angle,max_angle,size)
+        super().__init__(texture,offset,inventory_slot,min_angle,max_angle,size, player)
         self.player = player
         self.hp_increase = hp_increase
 

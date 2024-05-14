@@ -3,39 +3,57 @@
   "food": {
     "steak": {
       "category": "food",
+      "offset":[0.5,0,0],
       "health_increase": 15,
       "texture": "textures/items/steak.png",
-      "crafting_slots": []
+      "scale":[0.1,0.1,0],
+      "crafting_slots": [],
+      "description":"It is a cooked steak."
     },
     "beer": {
       "category": "food",
       "health_increase": 20,
+      "offset":[0.5,0,0],
+      "scale":[0.1,0.1,0],
       "texture": "textures/items/Beer.png",
-      "crafting_slots": []
+      "crafting_slots": [],
+      "description":"BEEER!!!!."
     },
     "eggs": {
       "category": "food",
       "health_increase": 10,
+      "offset":[0.5,0,0],
+      "scale":[0.1,0.1,0],
       "texture": "textures/items/Eggs.png",
-      "crafting_slots": []
+      "crafting_slots": [],
+      "description":"Cooked sunny-side up eggs."
     },
     "fish": {
       "category": "food",
       "health_increase": 15,
+      "offset":[0.5,0,0],
+      "scale":[0.1,0.1,0],
       "texture": "textures/items/Fish.png",
-      "crafting_slots": []
+      "crafting_slots": [],
+      "description":"Salmon."
     },
     "jam": {
       "category": "food",
       "health_increase": 13,
+      "offset":[0.5,0,0],
+      "scale":[0.1,0.1,0],
       "texture": "textures/items/Jam.png",
-      "crafting_slots": []
+      "crafting_slots": [],
+      "description":"Tasty strawberry jam."
     },
     "wine": {
       "category": "food",
       "health_increase": 15,
+      "offset":[0.5,0,0],
+      "scale":[0.1,0.1,0],
       "texture": "textures/items/Wine.png",
-      "crafting_slots": []
+      "crafting_slots": [],
+      "description":"Redwine."
     }
   },
   "building_structures": {},

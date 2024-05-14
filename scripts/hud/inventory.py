@@ -29,6 +29,7 @@ class InventorySlot(Entity):
         self.MAX_STACK_SIZE = MAX_STACK_SIZE
         self.num_items_slot = 0 
         self.item_type = ""
+        self.item_data = {}
         self.visualizer_entity = None
 
         self.num_items_slot_text = Text(f"{self.num_items_slot}", position=Vec3(-0.3,-0.3,-2.1), scale=10, origin=(0,0), parent=self)
@@ -43,7 +44,7 @@ class InventoryItem(Draggable):
         This is a class representing the visual item on the inventory.
         It houses all the information regarding movement of items, removal, etc.
     """
-    def __init__(self, slot_parent, inventory, texture, item_type, description, scale):
+    def __init__(self, slot_parent, inventory, texture, item_type, description, category, item_data, scale):
         super().__init__()
         #BASIC INIT.
         self.texture = texture
@@ -55,6 +56,8 @@ class InventoryItem(Draggable):
         self.world_position=self.slot_parent.world_position
         self.model="quad"
         self.inventory = inventory
+        self.category=category,
+        self.item_data=item_data
         
         #NO HIGHLIGHT COLOUR.
         self.color = color.white
@@ -143,11 +146,12 @@ class InventoryItem(Draggable):
     def drop_item(self):
         #We need to add the dropped items to the chunk entities.
         chunk_pos = self.inventory.player.world.pos_to_chunk_indicies(self.inventory.player.world_position)
-        item = MovingObject(model="quad",texture=copy.copy(self.texture),scale=0.5,velocity=Vec2(0,1),gravity=-4.905,collides=True, item_type=copy.copy(self.item_type), num_items=copy.copy(self.slot_parent.num_items_slot), description=copy.copy(self.description))
+        item = MovingObject(model="quad",texture=copy.copy(self.texture),scale=0.5,velocity=Vec2(0,1),gravity=-4.905,collides=True, item_type=copy.copy(self.item_type), num_items=copy.copy(self.slot_parent.num_items_slot), description=copy.copy(self.description), item_data=copy.copy(self.item_data))
         item.world_position=Vec3(copy.copy(self.inventory.player.world_position.x), copy.copy(self.inventory.player.world_position.y)+1,copy.copy(self.inventory.player.world_position.z))
         self.inventory.player.world.all_chunks[chunk_pos].entities.append(item)
         self.slot_parent.num_items_slot=0
         self.slot_parent.item_type=""
+        self.slot_parent.item_data={}
         self.slot_parent.num_items_slot_text.text = "0"
         destroy(self)
 
@@ -251,6 +255,7 @@ class CraftingItemSlot(Entity):
             if crafting_item!=None:
                 self.visualiser_entity.texture=crafting_item["texture"]
                 self.item_type=crafting_item["item_type"]
+                self.item_data=crafting_item
 
     def check_for_craftable_item(self):
         for craftable_item_category in CraftingItemSlot._craftable_items_data:
@@ -274,9 +279,10 @@ class CraftingItemSlot(Entity):
 
     def create_item_entity(self,item_data):
         chunk_indicies = self.inventory.player.world.pos_to_chunk_indicies(self.inventory.player.world_position)
-        item = MovingObject(velocity=Vec2(0,1),gravity=-4.905,collides=True, scale=0.5, texture=self.texture, model="quad", item_type=item_data["item_type"], num_items=item_data["num_items"], description=item_data["description"], item_category=item_data["category"])
+        item = MovingObject(velocity=Vec2(0,1),gravity=-4.905,collides=True, scale=0.5, texture=self.texture, model="quad", item_type=item_data["item_type"], num_items=item_data["num_items"], description=item_data["description"], item_category=item_data["category"], item_data=item_data)
         item.world_position=Vec3(self.inventory.player.world_position.x, self.inventory.player.world_position.y+1,self.inventory.player.world_position.z)
         self.inventory.player.world.all_chunks[chunk_indicies].entities.append(item)
+
 
     def craft_item(self,item_to_craft):
         #Remove the used materials.
@@ -292,6 +298,7 @@ class CraftingItemSlot(Entity):
                     #If we have exactly the right num of the item we need to delete the visualizer entity.
                     crafting_slot.num_items_slot=0
                     crafting_slot.item_type=""
+                    crafting_slot.item_data={}
                     destroy(crafting_slot.visualizer_entity)
 
         #Try to find a possible slot.
@@ -308,8 +315,9 @@ class CraftingItemSlot(Entity):
         if slot.num_items_slot==0:
             slot.num_items_slot=item_to_craft["num_items"]
             slot.item_type=item_to_craft["item_type"]
+            slot.item_data=item_to_craft
             slot.num_items_slot_text.text = slot.num_items_slot
-            inv_item = InventoryItem(slot_parent=slot, inventory=self,texture=item_to_craft["texture"],item_type=item_to_craft["item_type"],description=item_to_craft["description"],scale=0.05)
+            inv_item = InventoryItem(slot_parent=slot, inventory=self,texture=item_to_craft["texture"],item_type=item_to_craft["item_type"],description=item_to_craft["description"],scale=0.05, item_data=item_to_craft)
             slot.visualizer_entity=inv_item
         #If it already exists there.
         else:
@@ -519,7 +527,16 @@ class Inventory(Entity):
         self.big_menu = BigInventory(inventory=self)
         self.big_menu.enabled=False
         self.small_menu = SmallInventory()
-        self.small_menu.inventory_items[0].visualizer_entity=(InventoryItem(self.small_menu.inventory_items[0],inventory=self,texture="brick",item_type="brick",description="brick", scale=0.05))
+        self.small_menu.inventory_items[0].visualizer_entity=(
+            InventoryItem(self.small_menu.inventory_items[0],
+                          inventory=self,
+                          texture=CraftingItemSlot._craftable_items_data["food"]["steak"]["texture"],
+                          category=CraftingItemSlot._craftable_items_data["food"]["steak"]["category"],
+                          item_type="steak",
+                          description=CraftingItemSlot._craftable_items_data["food"]["steak"]["description"],
+                          item_data=CraftingItemSlot._craftable_items_data["food"]["steak"],
+                          scale=0.05)
+            )
         self.small_menu.inventory_items[0].num_items_slot=1
         self.small_menu.inventory_items[0].num_items_slot_text.text=1
         self.player = player
@@ -621,6 +638,7 @@ class Inventory(Entity):
         if slot.num_items_slot==0:
             slot.num_items_slot=copy.copy(item_on_ground.num_items)
             slot.item_type=copy.copy(item_on_ground.item_type)
+            slot.item_data=copy.copy(item_on_ground.item_data)
             slot.num_items_slot_text.text=slot.num_items_slot
             inv_item = InventoryItem(slot_parent=slot, inventory=self,texture=copy.copy(item_on_ground.texture),item_type=copy.copy(item_on_ground.item_type),description=copy.copy(item_on_ground.description),scale=0.05)
             slot.visualizer_entity=inv_item
