@@ -3,66 +3,72 @@
   "food": {
     "steak": {
       "category": "food",
-      "offset":[0.5,0,0],
+      "offset": [0.25, 0, 0],
       "health_increase": 15,
       "texture": "textures/items/steak.png",
-      "scale":[0.1,0.1,0],
+      "scale": [0.25, 0.25, 0],
       "crafting_slots": [],
-      "description":"It is a cooked steak."
+      "description": "It is a cooked steak."
     },
     "beer": {
       "category": "food",
       "health_increase": 20,
-      "offset":[0.5,0,0],
-      "scale":[0.1,0.1,0],
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "texture": "textures/items/Beer.png",
       "crafting_slots": [],
-      "description":"BEEER!!!!."
+      "description": "BEEER!!!!."
     },
     "eggs": {
       "category": "food",
       "health_increase": 10,
-      "offset":[0.5,0,0],
-      "scale":[0.1,0.1,0],
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "texture": "textures/items/Eggs.png",
       "crafting_slots": [],
-      "description":"Cooked sunny-side up eggs."
+      "description": "Cooked sunny-side up eggs."
     },
     "fish": {
       "category": "food",
       "health_increase": 15,
-      "offset":[0.5,0,0],
-      "scale":[0.1,0.1,0],
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "texture": "textures/items/Fish.png",
       "crafting_slots": [],
-      "description":"Salmon."
+      "description": "Salmon."
     },
     "jam": {
       "category": "food",
       "health_increase": 13,
-      "offset":[0.5,0,0],
-      "scale":[0.1,0.1,0],
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "texture": "textures/items/Jam.png",
       "crafting_slots": [],
-      "description":"Tasty strawberry jam."
+      "description": "Tasty strawberry jam."
     },
     "wine": {
       "category": "food",
       "health_increase": 15,
-      "offset":[0.5,0,0],
-      "scale":[0.1,0.1,0],
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "texture": "textures/items/Wine.png",
       "crafting_slots": [],
-      "description":"Redwine."
+      "description": "Redwine."
     }
   },
   "building_structures": {},
   "handheld_weapons": {
     "axe": {
       "category": "handheld_weapons",
-      "damage": 30,
+      "attack_damage": 30,
+      "offset": [0.25, 0, 0],
+      "scale": [0.35, 0.35, 0],
       "attack_range": 3,
+      "swing_time": 1,
+      "swing_reload_time": 1.5,
+      "swing_rotation_max": 60,
       "texture": "textures/items/axe.png",
+      "description": "Big axe - chop.",
       "crafting_slots": [
         { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "iron", "num_items_slot": 1 },
@@ -77,9 +83,15 @@
     },
     "sword": {
       "category": "handheld_weapons",
-      "damage": 50,
+      "attack_damage": 50,
+      "offset": [0.25, 0, 0],
+      "scale": [0.35, 0.35, 0],
       "attack_range": 4,
+      "swing_time": 1,
+      "swing_reload_time": 1.5,
+      "swing_rotation_max": 60,
       "texture": "textures/items/sword.png",
+      "description": "Big sword - swoosh.",
       "crafting_slots": [
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "iron", "num_items_slot": 1 },
@@ -94,9 +106,15 @@
     },
     "dagger": {
       "category": "handheld_weapons",
-      "damage": 25,
+      "attack_damage": 25,
+      "offset": [0.25, 0, 0],
+      "scale": [0.25, 0.25, 0],
       "attack_range": 1,
+      "swing_reload_time": 0.75,
+      "swing_time": 0.6,
+      "swing_rotation_max": 60,
       "texture": "textures/items/sword.png",
+      "description": "Small and quick dagger.",
       "crafting_slots": [
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 },

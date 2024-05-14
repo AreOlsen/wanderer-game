@@ -6,17 +6,25 @@ from scripts.moving_object import MovingObject
 class HoldingItem(Entity):
     def __init__(self, texture:str, offset:Vec3, inventory_slot, player, min_angle=0, max_angle=360, size=0.1, **kwargs):
         super().__init__(
+            model="quad",
             texture=texture,
-            size=size,
-            position=Vec3(0,1,-0.001)+offset,
+            parent=player,
             double_sided=True,
         )
-        self.parent = player
         self.min_angle=min_angle
         self.max_angle=max_angle
         self.inventory_slot=inventory_slot
+        self.time_since_used = 0
+        self.parent=player
+        self.position=Vec3(0+offset[0],0+offset[1],-0.1+offset[2])
+        self.scale=Vec3(size[0],size[1],size[2])
+        print(self.scale)
         for key, val in kwargs.items():
             setattr(self, key, val)
+
+    def update(self):
+        self.time_since_used+=time.dt
+        self.reset_slot_check()
 
     def calculate_angle_item(self):
         mos_pos = mouse.position
@@ -28,31 +36,39 @@ class HoldingItem(Entity):
             angle=self.max_angle
         return angle
     
-    def use_inv_inventory(self):
-        self.inventory_slot.num_items_slot-=1
-        self.inventory_slot.num_items_slot_text.text=f"{self.inventory_slot.num_items_slot}"
-        self.inventory_slot.visualizer_entity.num_items-=1
-        self.inventory_slot.visualizer_entity.num_items_slot_text.text=f"{self.inventory_slot.visualizer_entity.num_items}"
-        if self.inventory_slot.num_items_slot==0:
+    def reset_slot_check(self):
+        if self.inventory_slot.num_items_slot<=0:
+            self.inventory_slot.item_type=""
+            self.inventory_slot.category=""
+            self.inventory_slot.description=""
+            self.inventory_slot.item_data={}
+            self.inventory_slot.num_items_slot=0
+            self.inventory_slot.num_items_slot_text.text="0"
             destroy(self.inventory_slot.visualizer_entity)
             destroy(self)
 
+    def use_inv_inventory(self):
+        self.inventory_slot.num_items_slot-=1
+        self.inventory_slot.num_items_slot_text.text=f"{self.inventory_slot.num_items_slot}"
+        self.reset_slot_check()
+
 class Food(HoldingItem):
     def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, hp_increase, player):
-        super().__init__(texture,offset,inventory_slot,min_angle,max_angle,size, player)
+        super().__init__(texture=texture,offset=offset,inventory_slot=inventory_slot,min_angle=min_angle,max_angle=max_angle,size=size, player=player)
         self.player = player
         self.hp_increase = hp_increase
 
     def input(self,key):
-        if key=="e":
+        if key=="e" and self.time_since_used>=1:
+            self.time_since_used=0
             self.player.health+=self.hp_increase
             self.use_inv_inventory()
 
 
 class HandheldWeapon(HoldingItem):
     """This is a handheld item."""
-    def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, attack_range, swing_time, swing_reload_time, attack_damage, rotation_max=60):
-        super().__init__(texture,offset,inventory_slot,min_angle,max_angle, size)
+    def __init__(self, texture, offset, inventory_slot, min_angle, max_angle, size, attack_range, swing_time, swing_reload_time, attack_damage,player, rotation_max=60):
+        super().__init__(texture=texture,offset=offset,inventory_slot=inventory_slot,min_angle=min_angle,max_angle=max_angle, size=size, player=player)
         self.range = attack_range
         self.swing_time = swing_time
         self.time_since_last_swing = swing_reload_time
@@ -60,8 +76,9 @@ class HandheldWeapon(HoldingItem):
         self.attack_damage=attack_damage
         self.rotation_max = rotation_max
         self.rotation_animation_val = 0
+        self.player = player
 
-    def rotation(self,x):
+    def rotation_animation_speed(self,x):
         if 0<=x<=self.swing_time/3:
             self.rotation_animation_val-=time.dt*((-18/self.rotation_max/((self.swing_time)**2)) * x + 6*(self.rotation_max/self.swing_time))
         elif self.swing_reload_time/3<=x<=self.swing_reload_time*2/3:
@@ -75,18 +92,19 @@ class HandheldWeapon(HoldingItem):
         
         #Play mathematical swing animation.
         if self.time_since_last_swing<=self.swing_time:
-            self.rotation(self.time_since_last_swing)
+            self.rotation_animation_speed(self.time_since_last_swing)
 
         #Play animation.
         self.rotation.z = self.calculate_angle_item()+self.rotation_animation_val
+        print(self.rotation.z)
+
 
     def input(self,key):
         if key == "left mouse down" and self.time_since_last_swing>=self.swing_reload_time:
             self.time_since_last_swing=0
-            if hasattr(mouse.hovered_entity, "health"):
+            if hasattr(mouse.hovered_entity, "health") and mouse.hovered_entity!=self.player:
                 mouse.hovered_entity.health-=self.attack_damage
 
-                
 
 
 class Gun(HoldingItem):
@@ -162,6 +180,7 @@ class BuildingStructure(HoldingItem):
                 building = MovingObject(texture=self.building_data["texture"], scale=self.building_data["scale"], rotate=False, collides=True,intersects_with_player=False,player=self.player,chunk_ents=chunk_ents, health=self.building_data["health"])
                 building.collider = BoxCollider(building,center=(0,0), size=self.building_data["scale"])
                 chunk_ents.append(building)
+
 
 
 class InventoryItem(HoldingItem):
