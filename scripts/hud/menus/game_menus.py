@@ -5,7 +5,9 @@ from ursina import Entity, camera, Sprite
 from ursina.ursinamath import Vec2, Vec3
 import math
 
-
+###
+# GAME MENU (NEW OR LOAD GAME) STATE.
+###
 class GameMenu(MenuState):
     def __init__(self, state_changer):
         super().__init__()

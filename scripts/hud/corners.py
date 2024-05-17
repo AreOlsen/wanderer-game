@@ -1,18 +1,25 @@
 from ursina import camera, Entity, window
 import math
 
+
+###
+# HUD CORNERS.
+# NOT CURRENTLY USED - MIGHT BE USED IN NEXT UPDATE.
+###
 class Corners:
+    #INIT THE CORNER DATA.
     def __init__(self,
                 texture ="textures/hud/corner.png",
                 size_scale = 0.05,
                 offset_x = 0.1,
                 offset_y = 0.1):
+        #CORNER DATA.
         self.texture = texture
         self.size_scale = size_scale
         self.offset_x = offset_x
         self.offset_y = offset_y
-        #Load in all corners, they are placed - well - in the corners.
-        #We use math to quickly place the corners, and we rotate them as well at the same time.
+
+        #LOAD IN CORNERS - USING MATH FOR PLACEMENT.
         self.corners = [
             Entity(
                 parent=camera.ui,

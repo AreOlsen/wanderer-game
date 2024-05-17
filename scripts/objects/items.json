@@ -56,7 +56,80 @@
       "description": "Redwine."
     }
   },
-  "building_structures": {},
+  "building_structures": {
+    "right_wall":{
+      "category": "building_structures",
+      "offset": [0.25, 0, 0],
+      "scale": [0.35, 0.35, 0],
+      "texture": "textures/structures/right_wall.png",
+      "description": "Right facing wall.",
+      "building_range":30,
+      "crafting_slots": [
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 }],
+      "building_data":{
+        "texture": "textures/structures/right_wall.png",
+        "health":250,
+        "scale_x":2,
+        "scale_y":2
+        }
+      },
+      "left_wall":{
+        "category": "building_structures",
+        "offset": [0.25, 0, 0],
+        "scale": [0.35, 0.35, 0],
+        "texture": "textures/structures/left_wall.png",
+        "description": "Left facing wall.",
+        "building_range":30,
+        "crafting_slots": [
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "", "num_items_slot": 0 }],
+        "building_data":{
+          "texture": "textures/structures/left_wall.png",
+          "health":250,
+          "scale_x":2,
+          "scale_y":2
+        }
+      },
+      "wall":{
+        "category": "building_structures",
+        "offset": [0.25, 0, 0],
+        "scale": [0.35, 0.35, 0],
+        "texture": "textures/structures/wall.png",
+        "description": "wall.",
+        "building_range":30,
+        "crafting_slots": [
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "", "num_items_slot": 0 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "timber", "num_items_slot": 1 },
+          { "item_type": "", "num_items_slot": 0 }],
+        "building_data":{
+          "texture": "textures/structures/wall.png",
+          "health":250,
+          "scale_x":4,
+          "scale_y":3
+        }
+      }
+  },
   "handheld_weapons": {
     "axe": {
       "category": "handheld_weapons",
@@ -64,22 +137,21 @@
       "offset": [0.25, 0, 0],
       "scale": [0.35, 0.35, 0],
       "attack_range": 3,
-      "swing_time": 1,
+      "swing_time": 0.4,
       "swing_reload_time": 1.5,
       "swing_rotation_max": 60,
       "texture": "textures/items/axe.png",
       "description": "Big axe - chop.",
       "crafting_slots": [
-        { "item_type": "iron", "num_items_slot": 1 },
-        { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "timber", "num_items_slot": 1 },
-        { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "", "num_items_slot": 0 },
         { "item_type": "timber", "num_items_slot": 1 },
-        { "item_type": "", "num_items_slot": 0 }
-      ]
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 }]
     },
     "sword": {
       "category": "handheld_weapons",
@@ -87,20 +159,20 @@
       "offset": [0.25, 0, 0],
       "scale": [0.35, 0.35, 0],
       "attack_range": 4,
-      "swing_time": 1,
+      "swing_time": 0.4,
       "swing_reload_time": 1.5,
       "swing_rotation_max": 60,
       "texture": "textures/items/sword.png",
       "description": "Big sword - swoosh.",
       "crafting_slots": [
         { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "iron", "num_items_slot": 1 },
-        { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "iron", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 }
       ]
     },
@@ -111,19 +183,19 @@
       "scale": [0.25, 0.25, 0],
       "attack_range": 1,
       "swing_reload_time": 0.75,
-      "swing_time": 0.6,
+      "swing_time": 0.2,
       "swing_rotation_max": 60,
-      "texture": "textures/items/sword.png",
+      "texture": "textures/items/dagger.png",
       "description": "Small and quick dagger.",
       "crafting_slots": [
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "", "num_items_slot": 0 },
+        { "item_type": "timber", "num_items_slot": 1 },
         { "item_type": "iron", "num_items_slot": 1 },
         { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 },
-        { "item_type": "timber", "num_items_slot": 1 },
+        { "item_type": "", "num_items_slot": 0 },
         { "item_type": "", "num_items_slot": 0 }
       ]
     }

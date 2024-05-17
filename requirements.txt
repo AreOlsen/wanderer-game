@@ -1,5 +1,5 @@
 natsort==8.4.0
-numpy==1.25.2
+numpy==1.26.4
 opensimplex==0.4.5
-Pillow==10.2.0
-ursina==6.1.2
+Pillow==10.3.0
+ursina==7.0.0

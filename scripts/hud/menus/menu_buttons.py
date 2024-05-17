@@ -7,7 +7,9 @@ from scripts.characters.player import Player
 from scripts.hud.mini_map import Minimap
 
 
-
+###
+# REDIRECT TO ANOTHER STATE BUTTON.
+###
 class RedirectButton(Entity):
     def __init__(self, texture, to_state, state_changer, scale_x=0.3, scale_y=0.1, text="aaaa", font="textures/fonts/monocraft.ttf"):
         super().__init__(model="quad",collider="box",texture=texture)
@@ -22,7 +24,9 @@ class RedirectButton(Entity):
         self.state_changer.choose_state(self.to_state)
 
 
-
+###
+# QUIT GAME BUTTON.
+###
 class QuitButton(Entity):
     def __init__(self, texture, scale_x=0.3, scale_y=0.1, text="Quit", font="textures/fonts/monocraft.ttf"):
         super().__init__(model="quad",collider="box",texture=texture)
@@ -31,11 +35,14 @@ class QuitButton(Entity):
         self.scale_x=scale_x
         self.scale_y=scale_y
     
+    #QUIT.
     def on_click(self):
         application.quit()
 
 
-
+###
+# LOAD GAME FROM FILE BUTTON.
+###
 class LoadGameButton(Entity):
     def __init__(self, texture, save_name, state_changer, scale_x=0.3, scale_y=0.1, text="Save 1", font="textures/fonts/monocraft.ttf"):
         super().__init__(model="quad",collider="box",texture=texture)
@@ -48,8 +55,8 @@ class LoadGameButton(Entity):
 
     def on_click(self):
         self.state_changer.states["game"]=State()
-        w = World(save_name=self.save_name,background=Background(100,3.15,0.9999))
-        p = Player(world_position=Vec3(0,50,0), world=w)
+        w = World(save_name=self.save_name,background=Background(100,0.5,0.9999))
+        p = Player(world_position=Vec3(0,35,0), world=w)
         m = Minimap(player=p)
         p.minimap = m
         w.player=p
@@ -58,7 +65,9 @@ class LoadGameButton(Entity):
         self.state_changer.choose_state("game")
 
 
-
+###
+# NEW GAME FROM GAME INFORMATION BUTTON.
+###
 class NewGameButton(Entity):
     def __init__(self, texture, save_name_ref, seed_ref, difficulty_ref, state_changer, scale_x=0.3, scale_y=0.1, text="Start", font="textures/fonts/monocraft.ttf"):
         super().__init__(model="quad",collider="box",texture=texture)
@@ -72,7 +81,7 @@ class NewGameButton(Entity):
         self.difficulty_ref = difficulty_ref
 
 
-
+    #GENERATE WORLD.
     def on_click(self):
         #Create game state.
         self.state_changer.states["game"]=State()
@@ -89,8 +98,8 @@ class NewGameButton(Entity):
         _difficulty=self.difficulty_ref.value
 
         #Create the world.
-        world=World(save_name=_save_name,background=Background(100,3.15,0.9999), seed=_seed,difficulty=_difficulty)
-        player=Player(world_position=Vec3(0,50,0), world=world)
+        world=World(save_name=_save_name,background=Background(100,0.5,0.9999), seed=_seed,difficulty=_difficulty)
+        player=Player(world_position=Vec3(0,35,0), world=world)
         world.player=player
         minimap = Minimap(player=player)
         player.minimap = minimap
@@ -98,7 +107,9 @@ class NewGameButton(Entity):
         self.state_changer.choose_state("game")
 
 
-
+###
+# TEXT INPUT "BUTTON" FIELD.
+###
 class InputButtonField(InputField):
     def __init__(self, texture, scale_x=0.3, scale_y=0.1, text="Input", font="textures/fonts/monocraft.ttf"):
         super().__init__(model="quad",collider="box",texture=texture, character_limit=24, text=text, default_value=text, font=font)
@@ -110,7 +121,9 @@ class InputButtonField(InputField):
         self.scale_y=scale_y
 
 
-
+### 
+# MULTIPLE CHOICE BUTTON GROUP.
+###
 class ButtonChoice(ButtonGroup):
     def __init__(self, choices, texture, min_choice, max_choice, font="textures/fonts/monocraft.ttf",scale_x=0.3, scale_y=0.1,):
         super().__init__(options=choices,spacing=(0,0,0),texture=texture, character_limit=24, font=font, scale_x=scale_x, scale_y=scale_y, origin=(0,0,0), position=Vec3(0,0,-1))

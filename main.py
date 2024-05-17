@@ -16,6 +16,9 @@ from scripts.hud.menus.main_menu import MainMenu
 from scripts.hud.menus.load_games_menu import LoadGameMenu
 from scripts.hud.menus.new_game_menu import NewGameMenu
 
+### 
+# INIT GAME.
+###
 app = Ursina(
     title="Wanderer.",
     icon="wanderer_w_icon.ico",
@@ -28,7 +31,6 @@ app = Ursina(
 ###
 # MENUS.
 ###
-
 state_changer = Statechanger()
 START_MENU=MainMenu(state_changer)
 state_changer.add_state(START_MENU,"start_menu")
@@ -42,6 +44,10 @@ NEW_GAME_MENU=NewGameMenu(state_changer)
 state_changer.add_state(NEW_GAME_MENU,"new_game_menu")
 state_changer.choose_state("start_menu")
 
+###
+# TEMPORARY MUSIC. COMMENT OUT music FOR NO MUSIC.
+###
+music = Audio(sound_file_name="sounds/music/titlescreen.mp3",volume=0.2, autoplay=True, loop=True)
 
 ###
 # RUN GAME.

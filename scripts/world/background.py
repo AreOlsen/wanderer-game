@@ -5,28 +5,37 @@ import math
 import glob
 from PIL import Image
 
+###
+# BACKGROUND OBJECT.
+###
 class Background(Entity):
+    #INIT INFORMATION ABOUT THE BACKGROUND SPRITES.
     def __init__(self, z_position, y_position, movement_factor):
         super().__init__()
 
+        #MOVEMENT FACTOR DECIDES HOW FAST THE BACKGROUNDS ARE MOVING WHEN PLAYER MOVES.
         self.movement_factor = movement_factor
-        # Get all background images' path and put into a list.
+
+        #GET ALL BACKGROUND IMAGES.
         self.images = glob.glob("textures/background/*.png")
-        # Sort the list such that we images are displayed in correct order.
+
+        #SORT THE LIST SO THAT THE ORDER OF RENDER IS CORRECT.
         self.images = natsorted(self.images)
         self.y_position = y_position
-        # Get the desired 3d z distance from the background object and the camera.
+
+        #GET THE DESIRED Z POSITION IN THE WORLD TO SPAWN THE SPRITES AT.
         z_sum = abs(z_position - camera.world_position.z)
 
-        # The background image object size in x direction.
+        #BACKGROUND SPRITE SIZE IN X DIRECTION.
         self.s_x = 2 * abs(math.tan(math.radians(camera.fov_getter() / 2))) * z_sum
 
+        #POSITION FOR BACKGROUND SPRITES IN Z DIRECTION.
         self.z_position = z_position
 
 
-        # Make the backgrounds into objects using the previous calculated properties.
-        # We spawn in two because if the camera is inbetween the need two chunks to show the world continously.
-        # The size in y direction is the size in x, multiplied by the inverse aspect ratio of the image.
+        #SPAWN THE BACKGROUND SPRITES.
+        #SPAWN IN TWO SPRITES, AS WHEN CROSSING THE BORDER THERE NEEDS TO BE A NEW IDENTICAL SPRITE TO CONTINUE THE PATTERN.
+        #SCALE IN Y DIRECTION FOR THE SPRITE IS CALCULATED USING THE SCALE IN X DIRECTION.
         self.image_sprites = [
             (
                 Entity(
@@ -55,7 +64,8 @@ class Background(Entity):
             for i, path in enumerate(self.images, start=1)
         ]
         
-        # We want a constant background colour which is shown when the normal parallax images aren't in view, for empties skies and such
+
+        #CONSTANT BACKGROUND BEHIND THE CLOUDS AND SUCH, THIS IS JUST A PLAIN SKY.
         self.constant_sky_background = Entity(
             parent=camera,
             texture=Texture(Image.new(mode="RGBA",size=(256,256), color=(118,184,226,256))),
@@ -68,24 +78,15 @@ class Background(Entity):
         )
 
 
-        #Constant underground background for when we go under the ground.
-        #self.constant_underground_background = Sprite(
-        #    color=color.rgb(7,14,9),
-        #    world_position=Vec3(camera.world_position.x,min(self.image_sprites[-1][0].world_position.y-self.image_sprites[-1][0].scale_y,camera.world_position.y,self.z_position)),
-        #    scale_x=self.s_x,
-        #    scale_y=self.s_x/camera.aspect_ratio_getter(),
-        #    parent=camera,
-        #)
-        #print(self.constant_underground_background.world_position)
-
+    #GET THE MOVEMENT SPEED USING THE MOVEMENT FACTOR. 
+    #THE SPEED CHANGES BASED ON DISTANCE FROM THE PLAYER, THIS CREATES A PARALLAX EFFECT.
     def movement_speed(self, j):
         return 1 / (self.movement_factor ** (2) * j)
 
+
+    #UPDATE THE POSITIONS FOR THE BACKGROUND USING PARALLAX.
     def update(self):
-        #Update underground.
-        #self.constant_underground_background.world_position=Vec3(camera.world_position.x,min(self.image_sprites[-1][0].world_position.y-self.image_sprites[-1][0].scale_y,camera.world_position.y,self.z_position))
-        #print(self.constant_underground_background.world_position)
-        # We move the images according to a movement factor and then using basic sawtooth math we repeat the images.
+        #MOVE THE SPRITES IN SAWTOOTH PATTERN TO CREATE CONTINUATION IN SPRITES FOR CROSSING CHUNKS.
         for j, image_set in enumerate(reversed(self.image_sprites), start=1):
             offset_x = -(self.movement_speed(j) * camera.position.x / (self.s_x)) % 1
             offset_y = -(camera.y - self.y_position) * self.movement_speed(j) * 1.5

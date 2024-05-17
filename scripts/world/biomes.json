@@ -6,9 +6,11 @@
         "dropped_resource":
         {
           "name":"snow",
+          "offset": [0.25, 0, 0],
+          "category":"resource",
+          "description":"It is just snow.",
           "texture":"textures/items/snowball.png",
-          "size_y":0.1,
-          "size_x":0.1
+          "scale":[0.5,0.5,0]
         }
       },
       "under_surface_block":{
@@ -16,9 +18,11 @@
         "dropped_resource":
         {
           "name":"stone",
+          "offset": [0.25, 0, 0],
+          "category":"resource",
+          "description":"Stone, rock, rocky rock.",
           "texture":"textures/items/stone.png",
-          "size_y":0.1,
-          "size_x":0.1
+          "scale":[0.5,0.5,0]
         }
       },
       "ores":{
@@ -27,9 +31,11 @@
           "dropped_resource":
           {
             "name":"iron",
+            "offset": [0.25, 0, 0],
+            "category":"resource",
+            "description":"Ever made an iron axe?",
             "texture":"textures/items/iron_nugget.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "coal":{
@@ -37,9 +43,11 @@
           "dropped_resource":
           {
             "name":"coal",
+            "offset": [0.25, 0, 0],
+            "description":"Did you know that coal and sulfur can make gunpowder?",
+            "category":"resource",
             "texture":"textures/items/coal.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "diorite":{
@@ -47,9 +55,11 @@
           "dropped_resource":
           {
             "name":"diorite",
+            "offset": [0.25, 0, 0],
+            "description":"It's like bird poop - useless.",
+            "category":"resource",
             "texture":"textures/items/diorite.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         }
       } 
@@ -59,13 +69,16 @@
           "texture":"textures/foliage/winter_large_spruce.png",
           "size_y":0.5,
           "size_x":0.25,
+          "health":100,
           "spawn_rate":0.2,
           "dropped_resource":
           {
             "name":"timber",
+            "offset": [0.25, 0, 0],
+            "description":"Wood, fresh earth wood.",
+            "category":"resource",
             "texture":"textures/items/wood.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "small_tree":{
@@ -73,12 +86,15 @@
           "size_y":0.3,
           "size_x":0.15,
           "spawn_rate":0.1,
+          "health":70,
           "dropped_resource":
           {
             "name":"timber",
+            "offset": [0.25, 0, 0],
+            "description":"Wood, fresh earth wood.",
+            "category":"resource",
             "texture":"textures/items/wood.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         }
       }
@@ -90,9 +106,11 @@
           "dropped_resource":
           {
             "name":"dirt",
+            "offset": [0.25, 0, 0],
+            "description":"Soil.",
+            "category":"resource",
             "texture":"textures/items/dirt.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "under_surface_block":{
@@ -100,9 +118,11 @@
           "dropped_resource":
           {
             "name":"stone",
+            "offset": [0.25, 0, 0],
+            "category":"resource",
+            "description":"Stone, rock, rocky rock.",
             "texture":"textures/items/stone.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "ores":{
@@ -111,9 +131,11 @@
             "dropped_resource":
             {
               "name":"iron",
+              "offset": [0.25, 0, 0],
+              "category":"resource",
+              "description":"Ever made an iron axe?",
               "texture":"textures/items/iron_nugget.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "coal":{
@@ -121,9 +143,11 @@
             "dropped_resource":
             {
               "name":"coal",
+              "offset": [0.25, 0, 0],
+              "description":"Did you know that coal and sulfur can make gunpowder?",
+              "category":"resource",
               "texture":"textures/items/coal.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "diamond":{
@@ -131,9 +155,11 @@
             "dropped_resource":
             {
               "name":"diamond",
+              "offset": [0.25, 0, 0],
+              "description":"It's really shiny.",
+              "category":"resource",
               "texture":"textures/items/diamond.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "diorite":{
@@ -141,9 +167,10 @@
             "dropped_resource":
             {
               "name":"diorite",
+              "offset": [0.25, 0, 0],
+              "category":"resource",
               "texture":"textures/items/diorite.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           }
         } 
@@ -154,12 +181,15 @@
             "size_y":0.35,
             "size_x":0.35,
             "spawn_rate":0.2,
+            "health":100,
             "dropped_resource":
             {
               "name":"timber",
+              "offset": [0.25, 0, 0],
+              "description":"Wood, fresh earth wood.",
+              "category":"resource",
               "texture":"textures/items/wood.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "small_tree":{
@@ -167,12 +197,15 @@
             "size_y":0.3,
             "size_x":0.15,
             "spawn_rate":0.3,
+            "health":70,
             "dropped_resource":
             {
               "name":"timber",
+              "offset": [0.25, 0, 0],
+              "description":"Wood, fresh earth wood.",
+              "category":"resource",
               "texture":"textures/items/wood.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           }
         }
@@ -184,9 +217,11 @@
           "dropped_resource":
           {
             "name":"dirt",
+            "offset": [0.25, 0, 0],
+            "description":"Soil.",
+            "category":"resource",
             "texture":"textures/items/dirt.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "under_surface_block":{
@@ -194,9 +229,11 @@
           "dropped_resource":
           {
             "name":"dirt",
+            "offset": [0.25, 0, 0],
+            "category":"resource",
+            "description":"Soil.",
             "texture":"textures/items/dirt.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "ores":{
@@ -205,9 +242,11 @@
             "dropped_resource":
             {
               "name":"iron",
+              "offset": [0.25, 0, 0],
+              "category":"resource",
+              "description":"Ever made an iron axe?",
               "texture":"textures/items/iron_nugget.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "coal":{
@@ -215,9 +254,11 @@
             "dropped_resource":
             {
               "name":"coal",
+              "offset": [0.25, 0, 0],
+              "category":"resource",
+              "description":"Did you know that coal and sulfur can make gunpowder?",
               "texture":"textures/items/coal.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "sulfur":{
@@ -225,9 +266,11 @@
             "dropped_resource":
             {
               "name":"sulfur",
+              "offset": [0.25, 0, 0],
+              "description":"Try combining with coal.",
+              "category":"resource",
               "texture":"textures/items/sulfur.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "granite":{
@@ -235,9 +278,11 @@
             "dropped_resource":
             {
               "name":"granite",
+              "offset": [0.25, 0, 0],
+              "description":"Just like diorite, useless.",
+              "category":"resource",
               "texture":"textures/items/granite.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           }
         } 
@@ -247,13 +292,16 @@
             "texture":"textures/foliage/dead_plains_big_tree.png",
             "size_y":0.35,
             "size_x":0.35,
+            "health":40,
             "spawn_rate":0.1,
             "dropped_resource":
             {
               "name":"timber",
+              "offset": [0.25, 0, 0],
+              "description":"Wood, fresh earth wood.",
+              "category":"resource",
               "texture":"textures/items/wood.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
           "small_tree":{
@@ -261,12 +309,15 @@
             "size_y":0.275,
             "size_x":0.15,
             "spawn_rate":0.2,
+            "health":15,
             "dropped_resource":
             {
               "name":"timber",
+              "offset": [0.25, 0, 0],
+              "description":"Wood, fresh earth wood.",
+              "category":"resource",
               "texture":"textures/items/wood.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           },
 
@@ -275,12 +326,15 @@
             "size_y":0.3,
             "size_x":0.15,
             "spawn_rate":0.3,
+            "health":30,
             "dropped_resource":
             {
               "name":"timber",
+              "offset": [0.25, 0, 0],
+              "description":"Wood, fresh earth wood.",
+              "category":"resource",
               "texture":"textures/items/wood.png",
-              "size_y":0.1,
-              "size_x":0.1
+              "scale":[0.5,0.5,0]
             }
           }
         }
@@ -292,9 +346,11 @@
         "dropped_resource":
         {
           "name":"dirt",
+          "offset": [0.25, 0, 0],
+          "category":"resource",
+          "description":"Soil.",
           "texture":"textures/items/dirt.png",
-          "size_y":0.1,
-          "size_x":0.1
+          "scale":[0.5,0.5,0]
         }
       },
       "under_surface_block":{
@@ -302,9 +358,11 @@
         "dropped_resource":
         {
           "name":"stone",
+          "offset": [0.25, 0, 0],
+          "category":"resource",
+          "description":"Stone, rock, rocky rock.",
           "texture":"textures/items/stone.png",
-          "size_y":0.1,
-          "size_x":0.1
+          "scale":[0.5,0.5,0]
         }
       },
       "ores":{
@@ -313,9 +371,11 @@
           "dropped_resource":
           {
             "name":"iron",
+            "offset": [0.25, 0, 0],
+            "category":"resource",
+            "description":"Ever made an iron axe?",
             "texture":"textures/items/iron_nugget.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "coal":{
@@ -323,9 +383,11 @@
           "dropped_resource":
           {
             "name":"coal",
+            "offset": [0.25, 0, 0],
+            "category":"resource",
+            "description":"Did you know that coal and sulfur can make gunpowder?",
             "texture":"textures/items/coal.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "emerald":{
@@ -333,9 +395,11 @@
           "dropped_resource":
           {
             "name":"emerald",
+            "offset": [0.25, 0, 0],
+            "description":"It's shiny.",
+            "category":"resource",
             "texture":"textures/items/emerald.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         }
       } 
@@ -346,12 +410,15 @@
           "size_y":0.5,
           "size_x":0.25,
           "spawn_rate":0.2,
+          "health":100,
           "dropped_resource":
           {
             "name":"timber",
+            "offset": [0.25, 0, 0],
+            "description":"Wood, fresh earth wood.",
+            "category":"resource",
             "texture":"textures/items/wood.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         },
         "small_tree":{
@@ -359,12 +426,15 @@
           "size_y":0.3,
           "size_x":0.15,
           "spawn_rate":0.1,
+          "health":70,
           "dropped_resource":
           {
             "name":"timber",
+            "offset": [0.25, 0, 0],
+            "description":"Wood, fresh earth wood.",
+            "category":"resource",
             "texture":"textures/items/wood.png",
-            "size_y":0.1,
-            "size_x":0.1
+            "scale":[0.5,0.5,0]
           }
         }
       }

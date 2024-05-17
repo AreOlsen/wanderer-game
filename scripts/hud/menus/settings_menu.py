@@ -6,6 +6,9 @@ from ursina.ursinamath import Vec2, Vec3
 import math
 import os
 
+###
+# SETTINGS MENU.
+###
 class SettingsMenu(MenuState):
     def __init__(self, state_changer):
         super().__init__(button_distance=0)

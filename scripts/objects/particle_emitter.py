@@ -5,7 +5,12 @@ import math
 import random
 
 
+###
+# PARTICLE EMITTER CLASS FOR FIREPLACES AND SUCH.
+# NOT CURRENTLY UTILIZED - BUT WILL BE USED IN NEXT UPDATE.
+###
 class ParticleEmitter(Entity):
+    #INIT THE PARTICLE EMITTER.
     def __init__(
         self,
         position,
@@ -24,6 +29,7 @@ class ParticleEmitter(Entity):
         vel_range_y=(1, 3),
     ):
         super().__init__()
+        #INFO ABOUT THE PARTICLE EMITTER.
         self.fade = fade
         self.lessen_size = lessen_size
         self.duration = time_duration
@@ -40,29 +46,36 @@ class ParticleEmitter(Entity):
         self.position = position
         self.time_lasted = 0
 
+
+    #SPAWN INT THE PARTICLES.
     def spawn_particles(self):
+        #NUMBER OF PARTICLES TO SPAWN.
         number_to_spawn = math.ceil(self.particle_spawn_rate * time.dt)
         for i in range(number_to_spawn):
-            # Spawn pos.
+            
+            #GET THE PARTICLE POSITION.
             spawn_theta = random.random() * 2 * math.pi
             distance_circle = self.spawn_radius * random.random()
             spawn_pos = Vec2(
                 distance_circle * math.cos(spawn_theta),
                 distance_circle * math.sin(spawn_theta),
             )
-            # Scale.
+
+            # PARTICLE SIZE.
             scale = random.uniform(self.spawn_size_range[0], self.spawn_size_range[1])
-            # Velocity.
+
+            # PARTICLE SPEED.
             velocity = Vec2(
                 random.uniform(self.vel_range_x[0], self.vel_range_x[1]),
                 random.uniform(self.vel_range_y[0], self.vel_range_y[1]),
             )
 
-            # Particle time.
+            # PARTICLE LIFETIME.
             particle_duration = random.uniform(
                 self.particle_duration_range[0], self.particle_duration_range[1]
             )
-            # Particle spawning.
+
+            # SPAWN THE PARTICLE.
             new_par = Particle(
                 self.particle_texture,
                 spawn_pos,
@@ -77,6 +90,8 @@ class ParticleEmitter(Entity):
             new_par.parent = self
             self.children.append(new_par)
 
+
+    #UPDATE - SPAWN IN THE NECESSARY PARTICLES.
     def update(self):
         if self.forever or self.time_lasted <= self.time_duration:
             self.spawn_particles()

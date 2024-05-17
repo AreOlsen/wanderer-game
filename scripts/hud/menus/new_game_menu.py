@@ -6,6 +6,10 @@ from ursina.ursinamath import Vec2, Vec3
 import math
 import os
 
+
+###
+# NEW GAME MENU
+###
 class NewGameMenu(MenuState):
     def __init__(self, state_changer):
         super().__init__()
